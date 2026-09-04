@@ -14,107 +14,111 @@
         .controls button { background: #2e7d32; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; }
         .controls span { margin: 0 10px; font-weight: bold; }
         .cart-summary { margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 6px; }
-        .checkout-btn { background: #25d366; color: white; border: none; width: 100%; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+        .checkout-btn { background: #25d366; color: white; border: none; width: 100%; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 15px; }
         input[type="text"] { width: 100%; padding: 8px; margin-top: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h2>Yamja Fresh</h2>
-        <p>Fresh Cuts • Neighborhood Delivery</p>
-    </header>
+<header>
+    <img src="logo.jpg" alt="Yamja Fresh Logo" style="width: 120px; height: auto; display: block; margin: 0 auto;">
+</header>
 
-    <div class="container">
-        <h3>Our Menu</h3>
-        
-        <div class="item">
-            <div class="item-details">
-                <h4>Fresh Chicken (1kg)</h4>
-                <div class="item-price">₹220</div>
-            </div>
-            <div class="controls">
-                <button onclick="changeQty('Chicken', -1)">-</button>
-                <span id="qty-Chicken">0</span>
-                <button onclick="changeQty('Chicken', 1)">+</button>
-            </div>
+<div class="container">
+    <h3>Our Menu</h3>
+    
+    <div class="item">
+        <div class="item-details">
+            <h4>Fresh Chicken (1kg)</h4>
+            <div class="item-price">₹220</div>
         </div>
-
-        <div class="item">
-            <div class="item-details">
-                <h4>Fresh Mutton (1kg)</h4>
-                <div class="item-price">₹750</div>
-            </div>
-            <div class="controls">
-                <button onclick="changeQty('Mutton', -1)">-</button>
-                <span id="qty-Mutton">0</span>
-                <button onclick="changeQty('Mutton', 1)">+</button>
-            </div>
-        </div>
-
-        <div class="cart-summary">
-            <h4>Your Order Summary</h4>
-            <div id="cart-items">No items selected yet.</div>
-            <p><strong>Total: ₹<span id="cart-total">0</span></strong></p>
-            
-            <input type="text" id="customer-address" placeholder="Enter your delivery address & phone number">
-            <button class="checkout-btn" onclick="sendToWhatsApp()">Order via WhatsApp</button>
+        <div class="controls">
+            <button onclick="updateQty('Chicken', -1)">-</button>
+            <span id="qty-Chicken">0</span>
+            <button onclick="updateQty('Chicken', 1)">+</button>
         </div>
     </div>
 
-    <script>
-        const prices = { 'Chicken': 220, 'Mutton': 750 };
-        let cart = { 'Chicken': 0, 'Mutton': 0 };
+    <div class="item">
+        <div class="item-details">
+            <h4>Fresh Pork (1kg)</h4>
+            <div class="item-price">₹350</div>
+        </div>
+        <div class="controls">
+            <button onclick="updateQty('Pork', -1)">-</button>
+            <span id="qty-Pork">0</span>
+            <button onclick="updateQty('Pork', 1)">+</button>
+        </div>
+    </div>
 
-        function changeQty(item, change) {
-            cart[item] = Math.max(0, cart[item] + change);
-            document.getElementById(`qty-${item}`).innerText = cart[item];
-            updateCart();
+    <div class="cart-summary">
+        <h3>Your Cart</h3>
+        <p id="cart-items">No items selected.</p>
+        <p><strong>Total: ₹<span id="cart-total">0</span></strong></p>
+        
+        <label for="address">Delivery Address & Phone:</label>
+        <input type="text" id="address" placeholder="Enter your full address and phone number">
+
+        <button class="checkout-btn" onclick="sendOrder()">Order via WhatsApp</button>
+    </div>
+</div>
+
+<script>
+    let prices = { 'Chicken': 220, 'Pork': 350 };
+    let cart = { 'Chicken': 0, 'Pork': 0 };
+
+    function updateQty(item, change) {
+        cart[item] += change;
+        if (cart[item] < 0) cart[item] = 0;
+        document.getElementById(`qty-${item}`).innerText = cart[item];
+        updateCartSummary();
+    }
+
+    function updateCartSummary() {
+        let summaryText = "";
+        let total = 0;
+        let hasItems = false;
+
+        for (let item in cart) {
+            if (cart[item] > 0) {
+                hasItems = true;
+                let cost = cart[item] * prices[item];
+                total += cost;
+                summaryText += `• ${item}: ${cart[item]}kg (₹${cost})<br>`;
+            }
         }
 
-        function updateCart() {
-            let summaryText = '';
-            let total = 0;
-            let hasItems = false;
+        document.getElementById('cart-items').innerHTML = hasItems ? summaryText : "No items selected.";
+        document.getElementById('cart-total').innerText = total;
+    }
 
-            for (let item in cart) {
-                if (cart[item] > 0) {
-                    hasItems = true;
-                    let cost = cart[item] * prices[item];
-                    total += cost;
-                    summaryText += `${item} x ${cart[item]} = ₹${cost}<br>`;
-                }
-            }
+    function sendOrder() {
+        let address = document.getElementById('address').value.trim();
+        let total = document.getElementById('cart-total').innerText;
 
-            document.getElementById('cart-items').innerHTML = hasItems ? summaryText : 'No items selected yet.';
-            document.getElementById('cart-total').innerText = total;
+        if (total == "0") {
+            alert('Please select at least one item.');
+            return;
         }
 
-        function sendToWhatsApp() {
-            let total = document.getElementById('cart-total').innerText;
-            if (total == 0) {
-                alert('Please select at least one item.');
-                return;
-            }
-            let address = document.getElementById('customer-address').value;
-            if (!address) {
-                alert('Please enter your delivery address and phone number.');
-                return;
-            }
-
-            let message = "New Order - Yamja Fresh:%0A";
-            for (let item in cart) {
-                if (cart[item] > 0) {
-                    message += `- ${item}: ${cart[item]}kg%0A`;
-                }
-            }
-            message += `Total: ₹${total}%0A`;
-            message += `Delivery Details: ${address}`;
-
-            // Replace with your actual WhatsApp business number (include country code, e.g., 91XXXXXXXXXX)
-            let phoneNumber = "9779806537609"; 
-            window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+        if (!address) {
+            alert('Please enter your delivery address and phone number.');
+            return;
         }
-    </script>
+
+        let message = "New Order - Yamja Fresh:%0A";
+        for (let item in cart) {
+            if (cart[item] > 0) {
+                message += `• ${item}: ${cart[item]}kg%0A`;
+            }
+        }
+        message += `Total: ₹${total}%0A`;
+        message += `Delivery Details: ${address}`;
+
+        let phoneNumber = "9779806537609";
+        window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    }
+</script>
+
 </body>
 </html>
