@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yamja Fresh - Online Ordering</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 0; color: #333; }
+        header { background: #1b5e20; color: white; padding: 15px; text-align: center; }
+        .container { max-width: 600px; margin: 20px auto; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .item-details h4 { margin: 0 0 5px 0; }
+        .item-price { color: #2e7d32; font-weight: bold; }
+        .controls button { background: #2e7d32; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; }
+        .controls span { margin: 0 10px; font-weight: bold; }
+        .cart-summary { margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 6px; }
+        .checkout-btn { background: #25d366; color: white; border: none; width: 100%; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+        input[type="text"] { width: 100%; padding: 8px; margin-top: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h2>Yamja Fresh</h2>
+        <p>Fresh Cuts • Neighborhood Delivery</p>
+    </header>
+
+    <div class="container">
+        <h3>Our Menu</h3>
+        
+        <div class="item">
+            <div class="item-details">
+                <h4>Fresh Chicken (1kg)</h4>
+                <div class="item-price">₹220</div>
+            </div>
+            <div class="controls">
+                <button onclick="changeQty('Chicken', -1)">-</button>
+                <span id="qty-Chicken">0</span>
+                <button onclick="changeQty('Chicken', 1)">+</button>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-details">
+                <h4>Fresh Mutton (1kg)</h4>
+                <div class="item-price">₹750</div>
+            </div>
+            <div class="controls">
+                <button onclick="changeQty('Mutton', -1)">-</button>
+                <span id="qty-Mutton">0</span>
+                <button onclick="changeQty('Mutton', 1)">+</button>
+            </div>
+        </div>
+
+        <div class="cart-summary">
+            <h4>Your Order Summary</h4>
+            <div id="cart-items">No items selected yet.</div>
+            <p><strong>Total: ₹<span id="cart-total">0</span></strong></p>
+            
+            <input type="text" id="customer-address" placeholder="Enter your delivery address & phone number">
+            <button class="checkout-btn" onclick="sendToWhatsApp()">Order via WhatsApp</button>
+        </div>
+    </div>
+
+    <script>
+        const prices = { 'Chicken': 220, 'Mutton': 750 };
+        let cart = { 'Chicken': 0, 'Mutton': 0 };
+
+        function changeQty(item, change) {
+            cart[item] = Math.max(0, cart[item] + change);
+            document.getElementById(`qty-${item}`).innerText = cart[item];
+            updateCart();
+        }
+
+        function updateCart() {
+            let summaryText = '';
+            let total = 0;
+            let hasItems = false;
+
+            for (let item in cart) {
+                if (cart[item] > 0) {
+                    hasItems = true;
+                    let cost = cart[item] * prices[item];
+                    total += cost;
+                    summaryText += `${item} x ${cart[item]} = ₹${cost}<br>`;
+                }
+            }
+
+            document.getElementById('cart-items').innerHTML = hasItems ? summaryText : 'No items selected yet.';
+            document.getElementById('cart-total').innerText = total;
+        }
+
+        function sendToWhatsApp() {
+            let total = document.getElementById('cart-total').innerText;
+            if (total == 0) {
+                alert('Please select at least one item.');
+                return;
+            }
+            let address = document.getElementById('customer-address').value;
+            if (!address) {
+                alert('Please enter your delivery address and phone number.');
+                return;
+            }
+
+            let message = "New Order - Yamja Fresh:%0A";
+            for (let item in cart) {
+                if (cart[item] > 0) {
+                    message += `- ${item}: ${cart[item]}kg%0A`;
+                }
+            }
+            message += `Total: ₹${total}%0A`;
+            message += `Delivery Details: ${address}`;
+
+            // Replace with your actual WhatsApp business number (include country code, e.g., 91XXXXXXXXXX)
+            let phoneNumber = "910000000000"; 
+            window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+        }
+    </script>
+</body>
+</html>
