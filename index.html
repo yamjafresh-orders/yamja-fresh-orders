@@ -143,17 +143,45 @@
         </div>
     </div>
 
-    <!-- Eggs -->
+    <!-- Eggs (12 pcs) -->
     <div class="item">
         <img src="eggs.jpg" alt="Farm Fresh Eggs">
         <div class="item-details">
-            <h4>Farm Fresh Eggs (Tray of 30)</h4>
-            <div class="price">₹210</div>
+            <h4>Farm Fresh Eggs (12 pcs)</h4>
+            <div class="price">₹90</div>
         </div>
         <div class="item-actions">
-            <button onclick="decrement('Farm Fresh Eggs', 210)">-</button>
-            <span id="qty-Farm Fresh Eggs">0</span>
-            <button onclick="increment('Farm Fresh Eggs', 210)">+</button>
+            <button onclick="decrement('Farm Fresh Eggs (12 pcs)', 90)">-</button>
+            <span id="qty-Farm Fresh Eggs (12 pcs)">0</span>
+            <button onclick="increment('Farm Fresh Eggs (12 pcs)', 90)">+</button>
+        </div>
+    </div>
+
+    <!-- Eggs (6 pcs) -->
+    <div class="item">
+        <img src="eggs.jpg" alt="Farm Fresh Eggs">
+        <div class="item-details">
+            <h4>Farm Fresh Eggs (6 pcs)</h4>
+            <div class="price">₹45</div>
+        </div>
+        <div class="item-actions">
+            <button onclick="decrement('Farm Fresh Eggs (6 pcs)', 45)">-</button>
+            <span id="qty-Farm Fresh Eggs (6 pcs)">0</span>
+            <button onclick="increment('Farm Fresh Eggs (6 pcs)', 45)">+</button>
+        </div>
+    </div>
+
+    <!-- Eggs (4 pcs) -->
+    <div class="item">
+        <img src="eggs.jpg" alt="Farm Fresh Eggs">
+        <div class="item-details">
+            <h4>Farm Fresh Eggs (4 pcs)</h4>
+            <div class="price">₹30</div>
+        </div>
+        <div class="item-actions">
+            <button onclick="decrement('Farm Fresh Eggs (4 pcs)', 30)">-</button>
+            <span id="qty-Farm Fresh Eggs (4 pcs)">0</span>
+            <button onclick="increment('Farm Fresh Eggs (4 pcs)', 30)">+</button>
         </div>
     </div>
 
@@ -186,7 +214,8 @@
                 html += `${item} x ${cart[item].qty} = ₹${itemTotal}<br>`;
                 document.getElementById(`qty-${item}`).innerText = cart[item].qty;
             } else {
-                document.getElementById(`qty-${item}`).innerText = 0;
+                let qtyEl = document.getElementById(`qty-${item}`);
+                if (qtyEl) qtyEl.innerText = 0;
             }
         }
 
