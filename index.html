@@ -5,17 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yamja Fresh - Online Ordering</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 0; color: #333; }
-        header { background: #1b5e20; color: white; padding: 15px; text-align: center; }
-        .container { max-width: 600px; margin: 20px auto; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .item-details h4 { margin: 0 0 5px 0; }
-        .item-price { color: #2e7d32; font-weight: bold; }
-        .controls button { background: #2e7d32; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; }
-        .controls span { margin: 0 10px; font-weight: bold; }
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; color: #333; }
+        header { background-color: #2c5e1a; padding: 15px; text-align: center; }
+        .container { max-width: 600px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h3 { border-bottom: 2px solid #2c5e1a; padding-bottom: 8px; margin-top: 0; color: #2c5e1a; }
+        .item { display: flex; flex-direction: column; background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 12px; margin-bottom: 15px; }
+        .item img { width: 100%; height: 150px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; }
+        .item-details { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .item-details h4 { margin: 0; font-size: 16px; }
+        .price { font-weight: bold; color: #2c5e1a; font-size: 16px; }
+        .item-actions { display: flex; align-items: center; justify-content: flex-end; gap: 15px; }
+        .item-actions button { background-color: #2c5e1a; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        .item-actions button:active { background-color: #1e3f11; }
         .cart-summary { margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 6px; }
-        .checkout-btn { background: #25d366; color: white; border: none; width: 100%; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 15px; }
-        input[type="text"] { width: 100%; padding: 8px; margin-top: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        .checkout-btn { background: #25d366; color: white; border: none; padding: 10px; width: 100%; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        input[type="text"] { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -26,97 +30,232 @@
 
 <div class="container">
     <h3>Our Menu</h3>
-    
+
+    <!-- Broiler Chicken -->
     <div class="item">
+        <img src="broiler-chicken.jpg" alt="Broiler Chicken">
         <div class="item-details">
-            <h4>Fresh Chicken (1kg)</h4>
-            <div class="item-price">₹220</div>
+            <h4>Broiler Chicken (1kg)</h4>
+            <div class="price">₹220</div>
         </div>
-        <div class="controls">
-            <button onclick="updateQty('Chicken', -1)">-</button>
-            <span id="qty-Chicken">0</span>
-            <button onclick="updateQty('Chicken', 1)">+</button>
+        <div class="item-actions">
+            <button onclick="decrement('Broiler Chicken', 220)">-</button>
+            <span id="qty-Broiler Chicken">0</span>
+            <button onclick="increment('Broiler Chicken', 220)">+</button>
         </div>
     </div>
 
+    <!-- Curry Cut -->
     <div class="item">
+        <img src="curry-cut.jpg" alt="Broiler Curry Cut">
         <div class="item-details">
-            <h4>Fresh Pork (1kg)</h4>
-            <div class="item-price">₹350</div>
+            <h4>Broiler Curry Cut (1kg)</h4>
+            <div class="price">₹230</div>
         </div>
-        <div class="controls">
-            <button onclick="updateQty('Pork', -1)">-</button>
-            <span id="qty-Pork">0</span>
-            <button onclick="updateQty('Pork', 1)">+</button>
+        <div class="item-actions">
+            <button onclick="decrement('Broiler Curry Cut', 230)">-</button>
+            <span id="qty-Broiler Curry Cut">0</span>
+            <button onclick="increment('Broiler Curry Cut', 230)">+</button>
         </div>
     </div>
 
+    <!-- Wings -->
+    <div class="item">
+        <img src="wings.jpg" alt="Chicken Wings">
+        <div class="item-details">
+            <h4>Chicken Wings (500g)</h4>
+            <div class="price">₹140</div>
+        </div>
+        <div class="item-actions">
+            <button onclick="decrement('Chicken Wings', 140)">-</button>
+            <span id="qty-Chicken Wings">0</span>
+            <button onclick="increment('Chicken Wings', 140)">+</button>
+        </div>
+    </div>
+
+    <!-- Breast -->
+    <div class="item">
+        <img src="breast.jpg" alt="Chicken Breast">
+        <div class="item-details">
+            <h4>Chicken Breast (500g)</h4>
+            <div class="price">₹180</div>
+        </div>
+        <div class="item-actions">
+            <button onclick="decrement('Chicken Breast', 180)">-</button>
+            <span id="qty-Chicken Breast">0</span>
+            <button onclick="increment('Chicken Breast', 180)">+</button>
+        </div>
+    </div>
+
+    <!-- Boneless -->
+    <div class="item">
+        <img src="boneless.jpg" alt="Chicken Boneless">
+        <div class="item-details">
+            <h4>Chicken Boneless (500g)</h4>
+            <div class="price">₹200</div>
+        </div>
+        <div class="item-actions">
+            <button onclick="decrement('Chicken Boneless', 200)">-</button>
+            <span id="qty-Chicken Boneless">0</span>
+            <button onclick="increment('Chicken Boneless', 200)">+</button>
+        </div>
+    </div>
+
+    <!-- Drumstick -->
+    <div class="item">
+        <img src="drumstick.jpg" alt="Chicken Drumstick">
+        <div class="item-details">
+            <h4>Chicken Drumstick (500g)</h4>
+            <div class="price">₹160</div>
+        </div>
+        <div class="item-actions">
+            <button onclick="decrement('Chicken Drumstick', 160)">-</button>
+            <span id="qty-Chicken Drumstick">0</span>
+            <button onclick="increment('Chicken Drumstick', 160)">+</button>
+        </div>
+    </div>
+
+    <!-- Skinless -->
+    <div class="item">
+        <img src="skinless.jpg" alt="Skinless Chicken">
+        <div class="item-details">
+            <h4>Skinless Chicken (1kg)</h4>
+            <div class="price">₹240</div>
+        </div>
+        <div class="item-actions">
+            <button onclick="decrement('Skinless Chicken', 240)">-</button>
+            <span id="qty-Skinless Chicken">0</span>
+            <button onclick="increment('Skinless Chicken', 240)">+</button>
+        </div>
+    </div>
+
+    <!-- Local Chicken -->
+    <div class="item">
+        <img src="local-chicken.jpg" alt="Local Chicken">
+        <div class="item-details">
+            <h4>Local Chicken (1kg)</h4>
+            <div class="price">₹450</div>
+        </div>
+        <div class="item-actions">
+            <button onclick="decrement('Local Chicken', 450)">-</button>
+            <span id="qty-Local Chicken">0</span>
+            <button onclick="increment('Local Chicken', 450)">+</button>
+        </div>
+    </div>
+
+    <!-- Duck -->
+    <div class="item">
+        <img src="duck.jpg" alt="Fresh Duck">
+        <div class="item-details">
+            <h4>Fresh Duck (1kg)</h4>
+            <div class="price">₹400</div>
+        </div>
+        <div class="item-actions">
+            <button onclick="decrement('Fresh Duck', 400)">-</button>
+            <span id="qty-Fresh Duck">0</span>
+            <button onclick="increment('Fresh Duck', 400)">+</button>
+        </div>
+    </div>
+
+    <!-- Eggs -->
+    <div class="item">
+        <img src="eggs.jpg" alt="Farm Fresh Eggs">
+        <div class="item-details">
+            <h4>Farm Fresh Eggs (Tray of 30)</h4>
+            <div class="price">₹210</div>
+        </div>
+        <div class="item-actions">
+            <button onclick="decrement('Farm Fresh Eggs', 210)">-</button>
+            <span id="qty-Farm Fresh Eggs">0</span>
+            <button onclick="increment('Farm Fresh Eggs', 210)">+</button>
+        </div>
+    </div>
+
+    <!-- Cart Summary -->
     <div class="cart-summary">
-        <h3>Your Cart</h3>
-        <p id="cart-items">No items selected.</p>
-        <p><strong>Total: ₹<span id="cart-total">0</span></strong></p>
+        <h4>Your Cart</h4>
+        <div id="cart-items">No items selected.</div>
+        <p><strong>Total: ₹<span id="total-price">0</span></strong></p>
         
-        <label for="address">Delivery Address & Phone:</label>
-        <input type="text" id="address" placeholder="Enter your full address and phone number">
-
-        <button class="checkout-btn" onclick="sendOrder()">Order via WhatsApp</button>
+        <label for="customer-details">Delivery Address & Phone:</label>
+        <input type="text" id="customer-details" placeholder="Enter your full address and phone number">
+        
+        <button class="checkout-btn" onclick="checkoutWhatsApp()">Order via WhatsApp</button>
     </div>
 </div>
 
 <script>
-    let prices = { 'Chicken': 220, 'Pork': 350 };
-    let cart = { 'Chicken': 0, 'Pork': 0 };
+    let cart = {};
 
-    function updateQty(item, change) {
-        cart[item] += change;
-        if (cart[item] < 0) cart[item] = 0;
-        document.getElementById(`qty-${item}`).innerText = cart[item];
-        updateCartSummary();
-    }
-
-    function updateCartSummary() {
-        let summaryText = "";
+    function updateCartDisplay() {
+        let cartContainer = document.getElementById('cart-items');
+        let totalPriceEl = document.getElementById('total-price');
         let total = 0;
-        let hasItems = false;
+        let html = '';
 
         for (let item in cart) {
-            if (cart[item] > 0) {
-                hasItems = true;
-                let cost = cart[item] * prices[item];
-                total += cost;
-                summaryText += `• ${item}: ${cart[item]}kg (₹${cost})<br>`;
+            if (cart[item].qty > 0) {
+                let itemTotal = cart[item].qty * cart[item].price;
+                total += itemTotal;
+                html += `${item} x ${cart[item].qty} = ₹${itemTotal}<br>`;
+                document.getElementById(`qty-${item}`).innerText = cart[item].qty;
+            } else {
+                document.getElementById(`qty-${item}`).innerText = 0;
             }
         }
 
-        document.getElementById('cart-items').innerHTML = hasItems ? summaryText : "No items selected.";
-        document.getElementById('cart-total').innerText = total;
+        if (html === '') {
+            cartContainer.innerHTML = 'No items selected.';
+        } else {
+            cartContainer.innerHTML = html;
+        }
+        totalPriceEl.innerText = total;
     }
 
-    function sendOrder() {
-        let address = document.getElementById('address').value.trim();
-        let total = document.getElementById('cart-total').innerText;
-
-        if (total == "0") {
-            alert('Please select at least one item.');
-            return;
+    function increment(item, price) {
+        if (!cart[item]) {
+            cart[item] = { qty: 0, price: price };
         }
+        cart[item].qty++;
+        updateCartDisplay();
+    }
 
-        if (!address) {
+    function decrement(item, price) {
+        if (cart[item] && cart[item].qty > 0) {
+            cart[item].qty--;
+            updateCartDisplay();
+        }
+    }
+
+    function checkoutWhatsApp() {
+        let details = document.getElementById('customer-details').value;
+        if (!details) {
             alert('Please enter your delivery address and phone number.');
             return;
         }
 
-        let message = "New Order - Yamja Fresh:%0A";
+        let message = "New Order - Yamja Fresh:\n\n";
+        let total = 0;
+        let hasItems = false;
+
         for (let item in cart) {
-            if (cart[item] > 0) {
-                message += `• ${item}: ${cart[item]}kg%0A`;
+            if (cart[item].qty > 0) {
+                hasItems = true;
+                let itemTotal = cart[item].qty * cart[item].price;
+                total += itemTotal;
+                message += `- ${item} x ${cart[item].qty} (₹${itemTotal})\n`;
             }
         }
-        message += `Total: ₹${total}%0A`;
-        message += `Delivery Details: ${address}`;
 
-        let phoneNumber = "9779806537609";
-        window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+        if (!hasItems) {
+            alert('Please select at least one item.');
+            return;
+        }
+
+        message += `\nTotal: ₹${total}\n\nDelivery Details:\n${details}`;
+        let encodedMessage = encodeURIComponent(message);
+        let whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+        window.open(whatsappUrl, '_blank');
     }
 </script>
 
