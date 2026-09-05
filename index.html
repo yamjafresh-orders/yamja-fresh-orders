@@ -36,7 +36,7 @@
         <img src="curry-cut.jpg" alt="Broiler Curry Cut">
         <div class="item-details">
             <h4>Broiler Curry Cut (1kg)</h4>
-            <div class="price">₹<span id="price-Broiler Curry Cut">230</span></div>
+            <div class="price">₹<span id="price-Broiler Curry Cut">290</span></div>
         </div>
         <div class="item-actions">
             <button onclick="decrement('Broiler Curry Cut')">-</button>
@@ -50,7 +50,7 @@
         <img src="wings.jpg" alt="Chicken Wings">
         <div class="item-details">
             <h4>Chicken Wings (500g)</h4>
-            <div class="price">₹<span id="price-Chicken Wings">140</span></div>
+            <div class="price">₹<span id="price-Chicken Wings">170</span></div>
         </div>
         <div class="item-actions">
             <button onclick="decrement('Chicken Wings')">-</button>
@@ -64,7 +64,7 @@
         <img src="breast.jpg" alt="Chicken Breast">
         <div class="item-details">
             <h4>Chicken Breast (500g)</h4>
-            <div class="price">₹<span id="price-Chicken Breast">180</span></div>
+            <div class="price">₹<span id="price-Chicken Breast">220</span></div>
         </div>
         <div class="item-actions">
             <button onclick="decrement('Chicken Breast')">-</button>
@@ -78,7 +78,7 @@
         <img src="boneless.jpg" alt="Chicken Boneless">
         <div class="item-details">
             <h4>Chicken Boneless (500g)</h4>
-            <div class="price">₹<span id="price-Chicken Boneless">200</span></div>
+            <div class="price">₹<span id="price-Chicken Boneless">250</span></div>
         </div>
         <div class="item-actions">
             <button onclick="decrement('Chicken Boneless')">-</button>
@@ -92,7 +92,7 @@
         <img src="drumstick.jpg" alt="Chicken Drumstick">
         <div class="item-details">
             <h4>Chicken Drumstick (500g)</h4>
-            <div class="price">₹<span id="price-Chicken Drumstick">160</span></div>
+            <div class="price">₹<span id="price-Chicken Drumstick">190</span></div>
         </div>
         <div class="item-actions">
             <button onclick="decrement('Chicken Drumstick')">-</button>
@@ -106,7 +106,7 @@
         <img src="skinless.jpg" alt="Skinless Chicken">
         <div class="item-details">
             <h4>Skinless Chicken (1kg)</h4>
-            <div class="price">₹<span id="price-Skinless Chicken">240</span></div>
+            <div class="price">₹<span id="price-Skinless Chicken">310</span></div>
         </div>
         <div class="item-actions">
             <button onclick="decrement('Skinless Chicken')">-</button>
@@ -143,12 +143,26 @@
         </div>
     </div>
 
+    <!-- Eggs (Tray of 30) -->
+    <div class="item">
+        <img src="eggs.jpg" alt="Farm Fresh Eggs">
+        <div class="item-details">
+            <h4>Farm Fresh Eggs (Tray of 30)</h4>
+            <div class="price">₹<span id="price-Farm Fresh Eggs (Tray of 30)">420</span></div>
+        </div>
+        <div class="item-actions">
+            <button onclick="decrement('Farm Fresh Eggs (Tray of 30)')">-</button>
+            <span id="qty-Farm Fresh Eggs (Tray of 30)">0</span>
+            <button onclick="increment('Farm Fresh Eggs (Tray of 30)')">+</button>
+        </div>
+    </div>
+
     <!-- Eggs (12 pcs) -->
     <div class="item">
         <img src="eggs.jpg" alt="Farm Fresh Eggs">
         <div class="item-details">
             <h4>Farm Fresh Eggs (12 pcs)</h4>
-            <div class="price">₹<span id="price-Farm Fresh Eggs (12 pcs)">90</span></div>
+            <div class="price">₹<span id="price-Farm Fresh Eggs (12 pcs)">180</span></div>
         </div>
         <div class="item-actions">
             <button onclick="decrement('Farm Fresh Eggs (12 pcs)')">-</button>
@@ -162,7 +176,7 @@
         <img src="eggs.jpg" alt="Farm Fresh Eggs">
         <div class="item-details">
             <h4>Farm Fresh Eggs (6 pcs)</h4>
-            <div class="price">₹<span id="price-Farm Fresh Eggs (6 pcs)">45</span></div>
+            <div class="price">₹<span id="price-Farm Fresh Eggs (6 pcs)">90</span></div>
         </div>
         <div class="item-actions">
             <button onclick="decrement('Farm Fresh Eggs (6 pcs)')">-</button>
@@ -176,7 +190,7 @@
         <img src="eggs.jpg" alt="Farm Fresh Eggs">
         <div class="item-details">
             <h4>Farm Fresh Eggs (4 pcs)</h4>
-            <div class="price">₹<span id="price-Farm Fresh Eggs (4 pcs)">30</span></div>
+            <div class="price">₹<span id="price-Farm Fresh Eggs (4 pcs)">60</span></div>
         </div>
         <div class="item-actions">
             <button onclick="decrement('Farm Fresh Eggs (4 pcs)')">-</button>
@@ -202,7 +216,7 @@
     // ==========================================================
     // EASY PRICE MANAGEMENT: Change your prices right here in the future!
     // ==========================================================
-    const prices = (
+    const prices = {
         'Broiler Curry Cut': 290,
         'Chicken Wings': 170,
         'Chicken Breast': 220,
@@ -211,7 +225,7 @@
         'Skinless Chicken': 310,
         'Local Chicken': 450,
         'Fresh Duck': 400,
-        'Farm Fresh Eggs (Tray of 30)':420,
+        'Farm Fresh Eggs (Tray of 30)': 420,
         'Farm Fresh Eggs (12 pcs)': 180,
         'Farm Fresh Eggs (6 pcs)': 90,
         'Farm Fresh Eggs (4 pcs)': 60
