@@ -31,7 +31,6 @@
 <div class="container">
     <h3>Our Menu</h3>
 
-    <!-- Curry Cut -->
     <div class="item">
         <img src="curry-cut.jpg" alt="Broiler Curry Cut">
         <div class="item-details">
@@ -45,7 +44,6 @@
         </div>
     </div>
 
-    <!-- Wings -->
     <div class="item">
         <img src="wings.jpg" alt="Chicken Wings">
         <div class="item-details">
@@ -59,7 +57,6 @@
         </div>
     </div>
 
-    <!-- Breast -->
     <div class="item">
         <img src="breast.jpg" alt="Chicken Breast">
         <div class="item-details">
@@ -73,7 +70,6 @@
         </div>
     </div>
 
-    <!-- Boneless -->
     <div class="item">
         <img src="boneless.jpg" alt="Chicken Boneless">
         <div class="item-details">
@@ -87,7 +83,6 @@
         </div>
     </div>
 
-    <!-- Drumstick -->
     <div class="item">
         <img src="drumstick.jpg" alt="Chicken Drumstick">
         <div class="item-details">
@@ -101,7 +96,6 @@
         </div>
     </div>
 
-    <!-- Skinless -->
     <div class="item">
         <img src="skinless.jpg" alt="Skinless Chicken">
         <div class="item-details">
@@ -115,7 +109,6 @@
         </div>
     </div>
 
-    <!-- Local Chicken -->
     <div class="item">
         <img src="local-chicken.jpg" alt="Local Chicken">
         <div class="item-details">
@@ -129,7 +122,6 @@
         </div>
     </div>
 
-    <!-- Duck -->
     <div class="item">
         <img src="duck.jpg" alt="Fresh Duck">
         <div class="item-details">
@@ -143,7 +135,6 @@
         </div>
     </div>
 
-    <!-- Eggs (Tray of 30) -->
     <div class="item">
         <img src="eggs.jpg" alt="Farm Fresh Eggs">
         <div class="item-details">
@@ -157,7 +148,6 @@
         </div>
     </div>
 
-    <!-- Eggs (12 pcs) -->
     <div class="item">
         <img src="eggs.jpg" alt="Farm Fresh Eggs">
         <div class="item-details">
@@ -171,7 +161,6 @@
         </div>
     </div>
 
-    <!-- Eggs (6 pcs) -->
     <div class="item">
         <img src="eggs.jpg" alt="Farm Fresh Eggs">
         <div class="item-details">
@@ -185,7 +174,6 @@
         </div>
     </div>
 
-    <!-- Eggs (4 pcs) -->
     <div class="item">
         <img src="eggs.jpg" alt="Farm Fresh Eggs">
         <div class="item-details">
@@ -199,7 +187,6 @@
         </div>
     </div>
 
-    <!-- Cart Summary -->
     <div class="cart-summary">
         <h4>Your Cart</h4>
         <div id="cart-items">No items selected.</div>
@@ -312,7 +299,9 @@
 
         message += `\nTotal: ₹${total}\n\nDelivery Details:\n${details}`;
         let encodedMessage = encodeURIComponent(message);
-        let whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+        
+        // WhatsApp link configured with your Nepal number: 9779806537609
+        let whatsappUrl = `https://wa.me/9779806537609?text=${encodedMessage}`;
         window.open(whatsappUrl, '_blank');
     }
 </script>
