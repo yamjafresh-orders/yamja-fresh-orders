@@ -21,7 +21,7 @@
         .checkout-btn { background: #25d366; color: white; border: none; padding: 10px; width: 100%; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         input[type="text"] { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
         .weight-note { font-size: 12px; color: #d9534f; margin-top: 4px; font-style: italic; }
-        .free-delivery-banner { font-size: 13px; color: #2c5e1a; font-weight: bold; margin-bottom: 8px; background: #d0f0c0; padding: 6px; border-radius: 4px; text-align: center; }
+        .promo-banner { font-size: 13px; color: #2c5e1a; background: #d0f0c0; padding: 8px; border-radius: 4px; text-align: center; margin-bottom: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -277,10 +277,10 @@
     <!-- Cart Summary -->
     <div class="cart-summary">
         <h4>Your Cart</h4>
-        <div id="free-delivery-notice" class="free-delivery-banner" style="display:none;">🎉 You unlocked FREE Delivery!</div>
+        <div id="promo-banner" class="promo-banner">📦 Free Delivery on orders above ₹1,500!</div>
         <div id="cart-items">No items selected.</div>
         <p>Subtotal: ₹<span id="subtotal-price">0</span></p>
-        <p>Delivery Charge: ₹<span id="delivery-charge">0</span></p>
+        <p>Delivery Charge: ₹<span id="delivery-charge">40</span></p>
         <p><strong>Grand Total: ₹<span id="total-price">0</span></strong></p>
         
         <label for="customer-details">Delivery Address & Phone:</label>
@@ -326,7 +326,7 @@
         let subtotalEl = document.getElementById('subtotal-price');
         let deliveryEl = document.getElementById('delivery-charge');
         let totalPriceEl = document.getElementById('total-price');
-        let freeNoticeEl = document.getElementById('free-delivery-notice');
+        let promoBannerEl = document.getElementById('promo-banner');
         
         let subtotal = 0;
         let html = '';
@@ -345,25 +345,25 @@
 
         if (subtotal === 0) {
             cartContainer.innerHTML = 'No items selected.';
-            deliveryEl.innerText = 0;
-            totalPriceEl.innerText = 0;
             subtotalEl.innerText = 0;
-            freeNoticeEl.style.display = 'none';
+            deliveryEl.innerText = 40;
+            totalPriceEl.innerText = 0;
+            promoBannerEl.innerHTML = '📦 Free Delivery on orders above ₹1,500!';
             return;
         }
 
         cartContainer.innerHTML = html;
         subtotalEl.innerText = subtotal;
 
-        // Delivery logic: Free if >= 1500, otherwise 40
         let deliveryCharge = (subtotal >= 1500) ? 0 : 40;
         deliveryEl.innerText = deliveryCharge;
         totalPriceEl.innerText = subtotal + deliveryCharge;
 
-        if (deliveryCharge === 0) {
-            freeNoticeEl.style.display = 'block';
+        if (subtotal >= 1500) {
+            promoBannerEl.innerHTML = '🎉 Awesome! You unlocked FREE Delivery!';
         } else {
-            freeNoticeEl.style.display = 'none';
+            let needed = 1500 - subtotal;
+            promoBannerEl.innerHTML = `📦 Add ₹${needed} more for FREE Delivery!`;
         }
     }
 
