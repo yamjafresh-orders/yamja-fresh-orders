@@ -43,7 +43,11 @@
         
         .checkout-btn { background: #25d366; color: white; border: none; padding: 12px; width: 100%; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: background 0.2s; }
         .checkout-btn:hover { background: #20ba5a; }
-        input[type="text"] { width: 100%; padding: 10px; margin-top: 6px; box-sizing: border-box; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 14px; }
+        
+        .input-group { margin-top: 8px; }
+        .input-group label { font-size: 12px; font-weight: bold; color: #4a5568; display: block; margin-bottom: 2px; }
+        input[type="text"], input[type="tel"] { width: 100%; padding: 8px 10px; box-sizing: border-box; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 14px; }
+        
         .weight-note { font-size: 12px; color: #e53e3e; margin-top: 4px; font-style: italic; }
         .promo-banner { font-size: 13px; color: #2c5e1a; background: #e8f5e9; padding: 8px; border-radius: 6px; text-align: center; margin-bottom: 10px; font-weight: bold; border: 1px dashed #2c5e1a; }
         .cart-items-list { font-size: 14px; margin-bottom: 8px; color: #4a5568; border-bottom: 1px solid #edf2f7; padding-bottom: 5px; }
@@ -58,14 +62,12 @@
 </header>
 
 <div class="container">
-    <!-- Category Tabs -->
     <div class="category-tabs">
         <button class="tab-btn active" onclick="switchCategory('chicken', this)">🍗 Chicken</button>
         <button class="tab-btn" onclick="switchCategory('duck', this)">🦆 Fresh Duck</button>
         <button class="tab-btn" onclick="switchCategory('eggs', this)">🥚 Farm Eggs</button>
     </div>
 
-    <!-- CHICKEN SECTION -->
     <div id="section-chicken" class="category-section active">
         <h3>Chicken Options</h3>
 
@@ -199,7 +201,6 @@
         </div>
     </div>
 
-    <!-- DUCK SECTION -->
     <div id="section-duck" class="category-section">
         <h3>Fresh Duck Options</h3>
 
@@ -255,7 +256,6 @@
         </div>
     </div>
 
-    <!-- EGGS SECTION -->
     <div id="section-eggs" class="category-section">
         <h3>Farm Fresh Eggs</h3>
 
@@ -313,7 +313,6 @@
     </div>
 </div>
 
-<!-- Sticky Collapsible Cart Summary Bar -->
 <div id="cart-container" class="cart-summary">
     <div class="cart-header-bar" onclick="toggleCart()">
         <h4>🛒 Cart: ₹<span id="bar-total">0</span></h4>
@@ -327,7 +326,15 @@
         <div class="totals-row"><span>Delivery Charge:</span><span>₹<span id="delivery-charge">40</span></span></div>
         <div class="totals-row grand-total"><span>Grand Total:</span><span>₹<span id="total-price">0</span></span></div>
         
-        <input type="text" id="customer-details" placeholder="Enter delivery address & phone number">
+        <div class="input-group">
+            <label for="customer-phone">Phone Number:</label>
+            <input type="tel" id="customer-phone" placeholder="Enter your phone number">
+        </div>
+        <div class="input-group">
+            <label for="customer-address">Delivery Address:</label>
+            <input type="text" id="customer-address" placeholder="Enter your full street address / landmark">
+        </div>
+
         <button class="checkout-btn" onclick="checkoutWhatsApp()">Order via WhatsApp</button>
     </div>
 </div>
@@ -449,9 +456,15 @@
     }
 
     function checkoutWhatsApp() {
-        let details = document.getElementById('customer-details').value;
-        if (!details) {
-            alert('Please enter your delivery address and phone number.');
+        let phone = document.getElementById('customer-phone').value;
+        let address = document.getElementById('customer-address').value;
+
+        if (!phone) {
+            alert('Please enter your phone number.');
+            return;
+        }
+        if (!address) {
+            alert('Please enter your delivery address.');
             return;
         }
 
@@ -479,7 +492,7 @@
         message += `\nSubtotal: ₹${subtotal}\n`;
         message += `Delivery Charge: ₹${deliveryCharge} ${deliveryCharge === 0 ? '(FREE)' : ''}\n`;
         message += `Grand Total: ₹${grandTotal}\n\n`;
-        message += `Delivery Details:\n${details}`;
+        message += `Customer Details:\nPhone: ${phone}\nAddress: ${address}`;
 
         let encodedMessage = encodeURIComponent(message);
         let whatsappUrl = `https://wa.me/9779806537609?text=${encodedMessage}`;
