@@ -41,7 +41,8 @@
         .cart-body { display: none; margin-top: 10px; max-height: 55vh; overflow-y: auto; padding-top: 5px; border-top: 1px solid #edf2f7; }
         .cart-summary.expanded .cart-body { display: block; }
         
-        .checkout-btn { background: #25d366; color: white; border: none; padding: 12px; width: 100%; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: background 0.2s; text-align: center; display: block; text-decoration: none; }
+        .checkout-btn { background: #25d366; color: white; border: none; padding: 12px; width: 100%; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: background 0.2s; text-align: center; display: none; text-decoration: none; }
+        .checkout-btn.active { display: block; }
         .checkout-btn:hover { background: #20ba5a; }
 
         .upi-pay-btn { background: #5f259f; color: white; border: none; padding: 12px; width: 100%; font-size: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 12px; transition: background 0.2s; text-align: center; display: block; text-decoration: none; }
@@ -53,7 +54,6 @@
         
         .payment-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; margin-top: 8px; display: none; font-size: 13px; color: #4a5568; text-align: center; }
         .payment-box.active { display: block; }
-        .upi-id-highlight { font-weight: bold; color: #2c5e1a; background: #e8f5e9; padding: 4px 8px; border-radius: 4px; display: inline-block; margin: 4px 0; }
 
         .weight-note { font-size: 12px; color: #e53e3e; margin-top: 4px; font-style: italic; }
         .promo-banner { font-size: 13px; color: #2c5e1a; background: #e8f5e9; padding: 8px; border-radius: 6px; text-align: center; margin-bottom: 10px; font-weight: bold; border: 1px dashed #2c5e1a; }
@@ -360,11 +360,12 @@
         <!-- Direct UPI One-Tap Payment Box -->
         <div id="upi-box" class="payment-box active">
             Pay instantly via Google Pay, PhonePe, or Paytm:<br>
-            <a id="upi-link-btn" href="#" class="upi-pay-btn" onclick="return triggerUpiPayment()">⚡ Tap to Pay ₹<span id="btn-pay-total">0</span> via UPI</a>
-            <small style="color: #e53e3e; display: block; margin-top: 6px;">*Meat will be cut & dispatched after payment confirmation.</small>
+            <button class="upi-pay-btn" onclick="payAndSendWhatsApp()">⚡ Tap to Pay ₹<span id="btn-pay-total">0</span> & Send Order</button>
+            <small style="color: #e53e3e; display: block; margin-top: 6px;">*Opens payment app and automatically sends order to WhatsApp.</small>
         </div>
 
-        <button class="checkout-btn" onclick="checkoutWhatsApp()">Order via WhatsApp</button>
+        <!-- COD WhatsApp Button (Only used when Cash on Delivery is chosen) -->
+        <button id="whatsapp-btn" class="checkout-btn" onclick="checkoutWhatsApp()">📲 Order via WhatsApp (COD)</button>
     </div>
 </div>
 
@@ -399,6 +400,7 @@
             }
         }
         updateCartDisplay();
+        togglePaymentDetails();
     };
 
     function switchCategory(category, btn) {
@@ -423,10 +425,14 @@
     function togglePaymentDetails() {
         let method = document.getElementById('payment-method').value;
         let upiBox = document.getElementById('upi-box');
+        let whatsappBtn = document.getElementById('whatsapp-btn');
+
         if (method === 'upi') {
             upiBox.classList.add('active');
+            whatsappBtn.classList.remove('active'); // Hide standalone COD button
         } else {
             upiBox.classList.remove('active');
+            whatsappBtn.classList.add('active'); // Show COD WhatsApp button
         }
     }
 
@@ -438,7 +444,7 @@
             }
         }
         let deliveryCharge = (subtotal >= 1500 || subtotal === 0) ? 0 : 40;
-        if (subtotal === 0) deliveryCharge = 40; // Default view display
+        if (subtotal === 0) deliveryCharge = 40;
         let grandTotal = subtotal + (subtotal === 0 ? 40 : (subtotal >= 1500 ? 0 : 40));
         return { subtotal, deliveryCharge, grandTotal };
     }
@@ -497,15 +503,57 @@
         }
     }
 
-    function triggerUpiPayment() {
+    function payAndSendWhatsApp() {
+        let phone = document.getElementById('customer-phone').value;
+        let address = document.getElementById('customer-address').value;
+
+        if (!phone) {
+            alert('Please enter your phone number first.');
+            return;
+        }
+        if (!address) {
+            alert('Please enter your delivery address first.');
+            return;
+        }
+
         let totals = calculateTotals();
         if (totals.subtotal === 0) {
             alert('Please select at least one item first.');
-            return false;
+            return;
         }
+
+        // 1. Build the WhatsApp message string
+        let message = "New Order - Yamja Fresh (Pre-Paid):\n\n";
+        let subtotal = 0;
+
+        for (let item in cart) {
+            if (cart[item] && cart[item].qty > 0) {
+                let itemTotal = cart[item].qty * prices[item];
+                subtotal += itemTotal;
+                message += `- ${item} x ${cart[item].qty} (₹${itemTotal})\n`;
+            }
+        }
+
+        let deliveryCharge = (subtotal >= 1500) ? 0 : 40;
+        let grandTotal = subtotal + deliveryCharge;
+
+        message += `\nSubtotal: ₹${subtotal}\n`;
+        message += `Delivery Charge: ₹${deliveryCharge} ${deliveryCharge === 0 ? '(FREE)' : ''}\n`;
+        message += `Grand Total: ₹${grandTotal}\n\n`;
+        
+        message += `Customer Details:\nPhone: ${phone}\nAddress: ${address}\n\n`;
+        message += `Payment: PhonePe / Google Pay / UPI (Paid via Tap-to-Pay)`;
+
+        // 2. Open UPI Payment App first
         let upiUrl = `upi://pay?pa=${STORE_UPI_ID}&pn=Yamja%20Fresh&am=${totals.grandTotal}&cu=INR`;
         window.location.href = upiUrl;
-        return false;
+
+        // 3. Immediately follow up by opening WhatsApp with the order details
+        setTimeout(function() {
+            let encodedMessage = encodeURIComponent(message);
+            let whatsappUrl = `https://wa.me/9779806537609?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
+        }, 1000); // 1 second delay to let the payment app open smoothly first
     }
 
     function increment(item) {
@@ -526,7 +574,6 @@
     function checkoutWhatsApp() {
         let phone = document.getElementById('customer-phone').value;
         let address = document.getElementById('customer-address').value;
-        let paymentMethod = document.getElementById('payment-method').value;
 
         if (!phone) {
             alert('Please enter your phone number.');
@@ -537,7 +584,7 @@
             return;
         }
 
-        let message = "New Order - Yamja Fresh:\n\n";
+        let message = "New Order - Yamja Fresh (COD):\n\n";
         let subtotal = 0;
         let hasItems = false;
 
@@ -563,12 +610,7 @@
         message += `Grand Total: ₹${grandTotal}\n\n`;
         
         message += `Customer Details:\nPhone: ${phone}\nAddress: ${address}\n\n`;
-        
-        if (paymentMethod === 'upi') {
-            message += `Payment: PhonePe / Google Pay / UPI (Pre-Paid - Paid via Tap-to-Pay)`;
-        } else {
-            message += `Payment: Cash on Delivery (COD)`;
-        }
+        message += `Payment: Cash on Delivery (COD)`;
 
         let encodedMessage = encodeURIComponent(message);
         let whatsappUrl = `https://wa.me/9779806537609?text=${encodedMessage}`;
