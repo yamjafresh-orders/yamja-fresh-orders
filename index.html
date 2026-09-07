@@ -41,8 +41,11 @@
         .cart-body { display: none; margin-top: 10px; max-height: 55vh; overflow-y: auto; padding-top: 5px; border-top: 1px solid #edf2f7; }
         .cart-summary.expanded .cart-body { display: block; }
         
-        .checkout-btn { background: #25d366; color: white; border: none; padding: 12px; width: 100%; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 12px; transition: background 0.2s; }
+        .checkout-btn { background: #25d366; color: white; border: none; padding: 12px; width: 100%; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: background 0.2s; text-align: center; display: block; text-decoration: none; }
         .checkout-btn:hover { background: #20ba5a; }
+
+        .upi-pay-btn { background: #5f259f; color: white; border: none; padding: 12px; width: 100%; font-size: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 12px; transition: background 0.2s; text-align: center; display: block; text-decoration: none; }
+        .upi-pay-btn:hover { background: #4e1e82; }
         
         .input-group { margin-top: 8px; }
         .input-group label { font-size: 12px; font-weight: bold; color: #4a5568; display: block; margin-bottom: 2px; }
@@ -349,19 +352,16 @@
         <div class="input-group">
             <label for="payment-method">Payment Method:</label>
             <select id="payment-method" onchange="togglePaymentDetails()">
-                <option value="gpay">Google Pay / UPI (Pre-Paid)</option>
+                <option value="upi">PhonePe / Google Pay / UPI (Pre-Paid)</option>
                 <option value="cod">Cash on Delivery (COD)</option>
             </select>
         </div>
 
-        <!-- GPay / UPI Instructions Box -->
-        <div id="gpay-box" class="payment-box active">
-            Scan via Google Pay / PhonePe & Pay to UPI ID:<br>
-            <span class="upi-id-highlight">yamjafresh@upi</span><br>
-            <small style="color: #e53e3e;">*Meat will be cut & dispatched only after payment confirmation.</small>
-            <div style="margin-top: 6px;">
-                <input type="text" id="upi-ref" placeholder="Enter GPay / UPI Transaction ID or Ref No.">
-            </div>
+        <!-- Direct UPI One-Tap Payment Box -->
+        <div id="upi-box" class="payment-box active">
+            Pay instantly via Google Pay, PhonePe, or Paytm:<br>
+            <a id="upi-link-btn" href="#" class="upi-pay-btn" onclick="return triggerUpiPayment()">⚡ Tap to Pay ₹<span id="btn-pay-total">0</span> via UPI</a>
+            <small style="color: #e53e3e; display: block; margin-top: 6px;">*Meat will be cut & dispatched after payment confirmation.</small>
         </div>
 
         <button class="checkout-btn" onclick="checkoutWhatsApp()">Order via WhatsApp</button>
@@ -389,6 +389,7 @@
     };
 
     let cart = {};
+    const STORE_UPI_ID = "yamjafresh@upi"; // Replace with your real UPI ID when ready
 
     window.onload = function() {
         for (let item in prices) {
@@ -397,6 +398,7 @@
                 priceEl.innerText = prices[item];
             }
         }
+        updateCartDisplay();
     };
 
     function switchCategory(category, btn) {
@@ -420,12 +422,25 @@
 
     function togglePaymentDetails() {
         let method = document.getElementById('payment-method').value;
-        let gpayBox = document.getElementById('gpay-box');
-        if (method === 'gpay') {
-            gpayBox.classList.add('active');
+        let upiBox = document.getElementById('upi-box');
+        if (method === 'upi') {
+            upiBox.classList.add('active');
         } else {
-            gpayBox.classList.remove('active');
+            upiBox.classList.remove('active');
         }
+    }
+
+    function calculateTotals() {
+        let subtotal = 0;
+        for (let item in cart) {
+            if (cart[item] && cart[item].qty > 0) {
+                subtotal += cart[item].qty * prices[item];
+            }
+        }
+        let deliveryCharge = (subtotal >= 1500 || subtotal === 0) ? 0 : 40;
+        if (subtotal === 0) deliveryCharge = 40; // Default view display
+        let grandTotal = subtotal + (subtotal === 0 ? 40 : (subtotal >= 1500 ? 0 : 40));
+        return { subtotal, deliveryCharge, grandTotal };
     }
 
     function updateCartDisplay() {
@@ -434,6 +449,7 @@
         let barTotalEl = document.getElementById('bar-total');
         let deliveryEl = document.getElementById('delivery-charge');
         let totalPriceEl = document.getElementById('total-price');
+        let btnPayTotalEl = document.getElementById('btn-pay-total');
         let promoBannerEl = document.getElementById('promo-banner');
         
         let subtotal = 0;
@@ -457,6 +473,7 @@
             barTotalEl.innerText = 0;
             deliveryEl.innerText = 40;
             totalPriceEl.innerText = 0;
+            btnPayTotalEl.innerText = 0;
             promoBannerEl.innerHTML = '📦 Free Delivery on orders above ₹1,500!';
             return;
         }
@@ -470,6 +487,7 @@
         deliveryEl.innerText = deliveryCharge;
         totalPriceEl.innerText = grandTotal;
         barTotalEl.innerText = grandTotal;
+        btnPayTotalEl.innerText = grandTotal;
 
         if (subtotal >= 1500) {
             promoBannerEl.innerHTML = '🎉 Awesome! You unlocked FREE Delivery!';
@@ -477,6 +495,17 @@
             let needed = 1500 - subtotal;
             promoBannerEl.innerHTML = `📦 Add ₹${needed} more for FREE Delivery!`;
         }
+    }
+
+    function triggerUpiPayment() {
+        let totals = calculateTotals();
+        if (totals.subtotal === 0) {
+            alert('Please select at least one item first.');
+            return false;
+        }
+        let upiUrl = `upi://pay?pa=${STORE_UPI_ID}&pn=Yamja%20Fresh&am=${totals.grandTotal}&cu=INR`;
+        window.location.href = upiUrl;
+        return false;
     }
 
     function increment(item) {
@@ -498,7 +527,6 @@
         let phone = document.getElementById('customer-phone').value;
         let address = document.getElementById('customer-address').value;
         let paymentMethod = document.getElementById('payment-method').value;
-        let upiRef = document.getElementById('upi-ref').value;
 
         if (!phone) {
             alert('Please enter your phone number.');
@@ -506,11 +534,6 @@
         }
         if (!address) {
             alert('Please enter your delivery address.');
-            return;
-        }
-
-        if (paymentMethod === 'gpay' && !upiRef) {
-            alert('Please enter your Google Pay / UPI Transaction ID to confirm payment.');
             return;
         }
 
@@ -541,8 +564,8 @@
         
         message += `Customer Details:\nPhone: ${phone}\nAddress: ${address}\n\n`;
         
-        if (paymentMethod === 'gpay') {
-            message += `Payment: Google Pay / UPI (Pre-Paid)\nUPI Ref / Txn ID: ${upiRef}`;
+        if (paymentMethod === 'upi') {
+            message += `Payment: PhonePe / Google Pay / UPI (Pre-Paid - Paid via Tap-to-Pay)`;
         } else {
             message += `Payment: Cash on Delivery (COD)`;
         }
