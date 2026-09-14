@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yamja Fresh - Rider Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h2 { color: #2e7d32; text-align: center; }
+        .order-card { background: #fafafa; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 6px; }
+        .order-card h4 { margin: 0 0 10px 0; color: #333; }
+        .btn { padding: 8px 12px; margin-right: 5px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
+        .btn-dispatch { background: #ff9800; }
+        .btn-delivered { background: #4caf50; }
+        .status { font-weight: bold; margin-top: 5px; display: block; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Rider Active Orders</h2>
+    <div id="ordersList">
+        <p>No active orders loaded. Orders will appear here when tapped from WhatsApp.</p>
+    </div>
+</div>
+
+<script>
+    // Check URL parameters to see if a tracking ID was passed
+    const urlParams = new URLSearchParams(window.location.search);
+    const incomingTrack = urlParams.get('track');
+    const incomingPhone = urlParams.get('phone') || '555346324';
+    const incomingAddress = urlParams.get('address') || 'Yas village';
+
+    let orders = JSON.parse(localStorage.getItem('yamja_rider_orders')) || [];
+
+    if (incomingTrack && !orders.some(o => o.trackId === incomingTrack)) {
+        orders.push({
+            trackId: incomingTrack,
+            phone: incomingPhone,
+            address: incomingAddress,
+            status: 'Waiting for rider dispatch...'
+        });
+        localStorage.setItem('yamja_rider_orders', JSON.stringify(orders));
+    }
+
+    function renderOrders() {
+        const container = document.getElementById('ordersList');
+        if (orders.length === 0) {
+            container.innerHTML = '<p>No active orders loaded.</p>';
+            return;
+        }
+
+        container.innerHTML = '';
+        orders.forEach((order, index) => {
+            container.innerHTML += `
+                <div class="order-card">
+                    <h4>Tracking ID: ${order.trackId}</h4>
+                    <p><strong>Phone:</strong> ${order.phone}</p>
+                    <p><strong>Address:</strong> ${order.address}</p>
+                    <p><strong>Status:</strong> <span class="status" id="status-${index}">${order.status}</span></p>
+                    <button class="btn btn-dispatch" onclick="updateStatus(${index}, 'Out for Delivery')">Mark Out for Delivery</button>
+                    <button class="btn btn-delivered" onclick="updateStatus(${index}, 'Delivered')">Mark Delivered</button>
+                </div>
+            `;
+        });
+    }
+
+    function updateStatus(index, newStatus) {
+        orders[index].status = newStatus;
+        localStorage.setItem('yamja_rider_orders', JSON.stringify(orders));
+        document.getElementById(`status-${index}`).innerText = newStatus;
+        alert(`Order ${orders[index].trackId} updated to: ${newStatus}`);
+    }
+
+    renderOrders();
+</script>
+
+</body>
+</html>
