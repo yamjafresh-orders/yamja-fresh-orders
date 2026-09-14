@@ -329,7 +329,7 @@
         </div>
     </div>
 
-    <!-- Live Tracking Widget (Appears after checkout, with tap-to-copy enabled) -->
+    <!-- Live Tracking Widget -->
     <div id="tracking-section">
         <h3>📍 Live Order Tracking</h3>
         <p><strong>Tracking ID:</strong> <span id="display-tracking-id" onclick="copyTrackingId()" style="color: #2c5e1a; font-weight: bold; text-decoration: underline; cursor: pointer;" title="Tap to copy">--</span> <small>(Tap to copy)</small></p>
@@ -378,7 +378,7 @@
             <small style="color: #e53e3e; display: block; margin-top: 6px;">*Opens payment app and automatically sends order to WhatsApp.</small>
         </div>
 
-        <!-- COD WhatsApp Button (Only used when Cash on Delivery is chosen) -->
+        <!-- COD WhatsApp Button -->
         <button id="whatsapp-btn" class="checkout-btn" onclick="checkoutWhatsApp()">📲 Order via WhatsApp (COD)</button>
     </div>
 </div>
@@ -421,6 +421,13 @@
         }
         updateCartDisplay();
         togglePaymentDetails();
+        
+        // Auto-load tracking ID from URL query if user clicked link from WhatsApp
+        const urlParams = new URLSearchParams(window.location.search);
+        const trackId = urlParams.get('track');
+        if (trackId) {
+            initializeTrackingMap(trackId);
+        }
     };
 
     function switchCategory(category, btn) {
@@ -540,11 +547,9 @@
         document.getElementById('tracking-section').style.display = 'block';
         document.getElementById('display-tracking-id').innerText = trackingId;
         
-        // Scroll down so the guest instantly sees the tracking box
         document.getElementById('tracking-section').scrollIntoView({ behavior: 'smooth' });
 
         if (!map) {
-            // Default center coordinates (Imphal, Manipur area)
             map = L.map('deliveryMap').setView([24.8170, 93.9368], 14);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
@@ -602,7 +607,8 @@
         sendOrderData('Pre-Paid (UPI)', trackingId);
         initializeTrackingMap(trackingId);
 
-        let message = `New Order - Yamja Fresh (Pre-Paid):\n*Tracking ID: ${trackingId}*\n\n`;
+        let trackingUrl = window.location.href.split('?')[0] + '?track=' + trackingId;
+        let message = `New Order - Yamja Fresh (Pre-Paid):\n*Tracking ID:* ${trackingId}\n*Track Live:* ${trackingUrl}\n\n`;
         let subtotal = 0;
 
         for (let item in cart) {
@@ -662,7 +668,8 @@
         sendOrderData('Cash on Delivery (COD)', trackingId);
         initializeTrackingMap(trackingId);
 
-        let message = `New Order - Yamja Fresh (COD):\n*Tracking ID: ${trackingId}*\n\n`;
+        let trackingUrl = window.location.href.split('?')[0] + '?track=' + trackingId;
+        let message = `New Order - Yamja Fresh (COD):\n*Tracking ID:* ${trackingId}\n*Track Live:* ${trackingUrl}\n\n`;
         let subtotal = 0;
 
         for (let item in cart) {
