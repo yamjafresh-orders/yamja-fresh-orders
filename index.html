@@ -607,7 +607,9 @@
         sendOrderData('Pre-Paid (UPI)', trackingId);
         initializeTrackingMap(trackingId);
 
-        let trackingUrl = window.location.href.split('?')[0] + '?track=' + trackingId;
+        let cleanBaseUrl = window.location.href.split('?')[0].split('#')[0];
+        let trackingUrl = cleanBaseUrl + '?track=' + trackingId;
+        
         let message = `New Order - Yamja Fresh (Pre-Paid):\n*Tracking ID:* ${trackingId}\n*Track Live:* ${trackingUrl}\n\n`;
         let subtotal = 0;
 
@@ -668,7 +670,9 @@
         sendOrderData('Cash on Delivery (COD)', trackingId);
         initializeTrackingMap(trackingId);
 
-        let trackingUrl = window.location.href.split('?')[0] + '?track=' + trackingId;
+        let cleanBaseUrl = window.location.href.split('?')[0].split('#')[0];
+        let trackingUrl = cleanBaseUrl + '?track=' + trackingId;
+
         let message = `New Order - Yamja Fresh (COD):\n*Tracking ID:* ${trackingId}\n*Track Live:* ${trackingUrl}\n\n`;
         let subtotal = 0;
 
