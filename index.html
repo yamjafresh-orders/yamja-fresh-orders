@@ -329,10 +329,10 @@
         </div>
     </div>
 
-    <!-- Live Tracking Widget (Appears after checkout) -->
+    <!-- Live Tracking Widget (Appears after checkout, with tap-to-copy enabled) -->
     <div id="tracking-section">
         <h3>📍 Live Order Tracking</h3>
-        <p><strong>Tracking ID:</strong> <span id="display-tracking-id">--</span></p>
+        <p><strong>Tracking ID:</strong> <span id="display-tracking-id" onclick="copyTrackingId()" style="color: #2c5e1a; font-weight: bold; text-decoration: underline; cursor: pointer;" title="Tap to copy">--</span> <small>(Tap to copy)</small></p>
         <p id="tracking-status-text">Status: Order placed. Waiting for rider dispatch...</p>
         <div id="deliveryMap"></div>
     </div>
@@ -525,6 +525,15 @@
 
     function generateTrackingId() {
         return 'YFJ-' + Math.floor(1000 + Math.random() * 9000);
+    }
+
+    function copyTrackingId() {
+        let trackingText = document.getElementById('display-tracking-id').innerText;
+        if (trackingText && trackingText !== '--') {
+            navigator.clipboard.writeText(trackingText).then(function() {
+                alert('Tracking ID ' + trackingText + ' copied to clipboard!');
+            });
+        }
     }
 
     function initializeTrackingMap(trackingId) {
