@@ -36,6 +36,8 @@
 </div>
 
 <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxs3pi2MbK6sd-LXF2CmP18qR4Dvqoi3cTaL_GGko-T49VCYvRf13AfTOhgpS2zyGaplA/exec';
+
     // Check URL parameters to see if a tracking ID was passed
     const urlParams = new URLSearchParams(window.location.search);
     const incomingTrack = urlParams.get('track');
@@ -83,7 +85,6 @@
             return;
         }
 
-        // Add the new order to the list
         orders.push({
             trackId: trackIdInput,
             phone: '+971 50 123 4567',
@@ -92,15 +93,32 @@
         });
 
         localStorage.setItem('yamja_rider_orders', JSON.stringify(orders));
-        document.getElementById('manualTrackId').value = ''; // Clear input box
+        document.getElementById('manualTrackId').value = '';
         renderOrders();
     }
 
     function updateStatus(index, newStatus) {
-        orders[index].status = newStatus;
+        const order = orders[index];
+        order.status = newStatus;
         localStorage.setItem('yamja_rider_orders', JSON.stringify(orders));
         document.getElementById(`status-${index}`).innerText = newStatus;
-        alert(`Order ${orders[index].trackId} updated to: ${newStatus}`);
+
+        // Send the updated status to the Google Sheet cloud
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'updateStatus',
+                orderId: order.trackId,
+                status: newStatus
+            })
+        }).then(() => {
+            alert(`Order ${order.trackId} updated to: ${newStatus} (Synced to Cloud)`);
+        }).catch(err => {
+            console.error('Error syncing status:', err);
+            alert(`Updated locally, but cloud sync failed.`);
+        });
     }
 
     renderOrders();
