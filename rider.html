@@ -8,6 +8,9 @@
         body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
         .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         h2 { color: #2e7d32; text-align: center; }
+        .order-input-box { background: #e8f5e9; border: 1px solid #c8e6c9; padding: 12px; margin-bottom: 20px; border-radius: 6px; text-align: center; }
+        .order-input-box input { padding: 8px; width: 65%; margin-right: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        .order-input-box button { padding: 8px 12px; background: #2e7d32; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .order-card { background: #fafafa; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 6px; }
         .order-card h4 { margin: 0 0 10px 0; color: #333; }
         .btn { padding: 8px 12px; margin-right: 5px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
@@ -20,6 +23,13 @@
 
 <div class="container">
     <h2>Rider Active Orders</h2>
+
+    <!-- Manual Input Form for Riders -->
+    <div class="order-input-box">
+        <input type="text" id="manualTrackId" placeholder="Enter Tracking ID (e.g., YFJ-1665)" />
+        <button onclick="addManualOrder()">Add Order</button>
+    </div>
+
     <div id="ordersList">
         <p>No active orders loaded. Orders will appear here when tapped from WhatsApp.</p>
     </div>
@@ -64,6 +74,26 @@
                 </div>
             `;
         });
+    }
+
+    function addManualOrder() {
+        const trackIdInput = document.getElementById('manualTrackId').value.trim();
+        if (!trackIdInput) {
+            alert('Please enter a valid tracking ID');
+            return;
+        }
+
+        // Add the new order to the list
+        orders.push({
+            trackId: trackIdInput,
+            phone: '+971 50 123 4567',
+            address: 'yas village',
+            status: 'Waiting for rider dispatch...'
+        });
+
+        localStorage.setItem('yamja_rider_orders', JSON.stringify(orders));
+        document.getElementById('manualTrackId').value = ''; // Clear input box
+        renderOrders();
     }
 
     function updateStatus(index, newStatus) {
