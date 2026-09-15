@@ -411,6 +411,7 @@
     
     let map = null;
     let riderMarker = null;
+    let statusInterval = null;
 
     window.onload = function() {
         for (let item in prices) {
@@ -560,6 +561,23 @@
                 .bindPopup('Yamja Fresh Rider Location')
                 .openPopup();
         }
+
+        // Start polling live status from Google Sheets
+        checkLiveStatus(trackingId);
+        if (statusInterval) clearInterval(statusInterval);
+        statusInterval = setInterval(() => checkLiveStatus(trackingId), 5000);
+    }
+
+    function checkLiveStatus(trackingId) {
+        if (!SCRIPT_URL) return;
+        fetch(`${SCRIPT_URL}?action=getStatus&orderId=${trackingId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.status) {
+                    document.getElementById('tracking-status-text').innerText = "Status: " + data.status;
+                }
+            })
+            .catch(err => console.log('Status sync error:', err));
     }
 
     function sendOrderData(paymentType, trackingId) {
