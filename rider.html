@@ -1,153 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yamja Fresh - Rider Dashboard</title>
-<style>
-body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
-.container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-h2 { color: #2e7d32; text-align: center; }
-.order-input-box { background: #e8f5e9; border: 1px solid #c8e6c9; padding: 12px; margin-bottom: 20px; border-radius: 6px; text-align: center; }
-.order-input-box input { padding: 8px; width: 65%; margin-right: 5px; border: 1px solid #ccc; border-radius: 4px; }
-.order-input-box button { padding: 8px 12px; background: #2e7d32; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-.order-card { background: #fafafa; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 6px; }
-.order-card h4 { margin: 0 0 10px 0; color: #333; }
-.btn { padding: 8px 12px; margin-right: 5px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
-.btn-dispatch { background: #ff9800; }
-.btn-delivered { background: #4caf50; }
-.status { font-weight: bold; margin-top: 5px; display: block; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yamja Fresh - Rider Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h2 { color: #2e7d32; text-align: center; }
+        .order-input-box { background: #e8f5e9; border: 1px solid #c8e6c9; padding: 12px; margin-bottom: 20px; border-radius: 6px; text-align: center; }
+        .order-input-box input { padding: 8px; width: 65%; margin-right: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        .order-input-box button { padding: 8px 12px; background: #2e7d32; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .order-card { background: #fafafa; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 6px; }
+        .order-card h4 { margin: 0 0 10px 0; color: #333; }
+        .btn { padding: 8px 12px; margin-right: 5px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
+        .btn-dispatch { background: #ff9800; }
+        .btn-delivered { background: #4caf50; }
+        .status { font-weight: bold; margin-top: 5px; display: block; }
+    </style>
 </head>
 <body>
 
 <div class="container">
-<h2>Rider Dashboard</h2>
+    <h2>Rider Active Orders</h2>
 
-<div class="order-input-box">
-<input type="text" id="manualTrackId" placeholder="Enter Tracking ID (e.g., YFJ-5614)" />
-<button onclick="addManualOrder()">Add Order</button>
-</div>
+    <!-- Manual Input Form for Riders -->
+    <div class="order-input-box">
+        <input type="text" id="manualTrackId" placeholder="Enter Tracking ID (e.g., YFJ-1665)" />
+        <button onclick="addManualOrder()">Add Order</button>
+    </div>
 
-<div id="ordersList">
-<p>Loading orders...</p>
-</div>
+    <div id="ordersList">
+        <p>No active orders loaded. Orders will appear here when tapped from WhatsApp.</p>
+    </div>
 </div>
 
 <script>
-// PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
-const SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxs3pi2MbK6sd-LXF2CmP18qR4Dvqoi3cTaL_GGko-T49VCYvRf13AfTOhgpS2zyGaplA/exec';
 
-let orders = [];
+    // Check URL parameters to see if a tracking ID was passed
+    const urlParams = new URLSearchParams(window.location.search);
+    const incomingTrack = urlParams.get('track');
+    const incomingPhone = urlParams.get('phone') || '555346324';
+    const incomingAddress = urlParams.get('address') || 'Yas village';
 
-async function fetchOrders() {
-try {
-let response = await fetch(SCRIPT_URL + '?action=getAllOrders');
-let data = await response.json();
-orders = data;
-renderOrders();
-} catch (e) {
-document.getElementById('ordersList').innerHTML = '<p>Could not load orders from Google Sheet. Check connection or URL.</p>';
-}
-}
+    let orders = JSON.parse(localStorage.getItem('yamja_rider_orders')) || [];
 
-function renderOrders() {
-const container = document.getElementById('ordersList');
-if (orders.length === 0) {
-container.innerHTML = '<p>No active orders loaded.</p>';
-return;
-}
+    if (incomingTrack && !orders.some(o => o.trackId === incomingTrack)) {
+        orders.push({
+            trackId: incomingTrack,
+            phone: incomingPhone,
+            address: incomingAddress,
+            status: 'Waiting for rider dispatch...'
+        });
+        localStorage.setItem('yamja_rider_orders', JSON.stringify(orders));
+    }
 
-container.innerHTML = '';
-orders.forEach((order, index) => {
-container.innerHTML += `
-<div class="order-card">
-<h4>Tracking ID: ${order.trackingId}</h4>
-<p><strong>Phone:</strong> ${order.phone}</p>
-<p><strong>Address:</strong> ${order.address}</p>
-<p><strong>Status:</strong> <span class="status" id="status-${index}">${order.status}</span></p>
-<button class="btn btn-dispatch" onclick="updateStatus(${index}, 'Out for Delivery')">Mark Out for Delivery</button>
-<button class="btn btn-delivered" onclick="updateStatus(${index}, 'Delivered')">Mark Delivered</button>
-</div>
-`;
-});
-}
+    function renderOrders() {
+        const container = document.getElementById('ordersList');
+        if (orders.length === 0) {
+            container.innerHTML = '<p>No active orders loaded.</p>';
+            return;
+        }
 
-async function updateStatus(index, newStatus) {
-const order = orders[index];
-order.status = newStatus;
-document.getElementById(`status-${index}`).innerText = newStatus;
+        container.innerHTML = '';
+        orders.forEach((order, index) => {
+            container.innerHTML += `
+                <div class="order-card">
+                    <h4>Tracking ID: ${order.trackId}</h4>
+                    <p><strong>Phone:</strong> ${order.phone}</p>
+                    <p><strong>Address:</strong> ${order.address}</p>
+                    <p><strong>Status:</strong> <span class="status" id="status-${index}">${order.status}</span></p>
+                    <button class="btn btn-dispatch" onclick="updateStatus(${index}, 'Out for Delivery')">Mark Out for Delivery</button>
+                    <button class="btn btn-delivered" onclick="updateStatus(${index}, 'Delivered')">Mark Delivered</button>
+                </div>
+            `;
+        });
+    }
 
-// If Out for Delivery, start sending live GPS coordinates
-if (newStatus === 'Out for Delivery') {
-startTrackingLocation(order.trackingId);
-}
+    function addManualOrder() {
+        const trackIdInput = document.getElementById('manualTrackId').value.trim();
+        if (!trackIdInput) {
+            alert('Please enter a valid tracking ID');
+            return;
+        }
 
-// Send update to Google Sheet
-try {
-await fetch(SCRIPT_URL, {
-method: 'POST',
-mode: 'no-cors',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({
-action: 'updateStatus',
-trackingId: order.trackingId,
-status: newStatus
-})
-});
-alert(`Order ${order.trackingId} updated to: ${newStatus}`);
-} catch (e) {
-alert('Status updated locally, but failed to sync with server.');
-}
-}
+        orders.push({
+            trackId: trackIdInput,
+            phone: '+971 50 123 4567',
+            address: 'yas village',
+            status: 'Waiting for rider dispatch...'
+        });
 
-function startTrackingLocation(trackingId) {
-if (navigator.geolocation) {
-navigator.geolocation.watchPosition(async (position) => {
-const lat = position.coords.latitude;
-const lng = position.coords.longitude;
+        localStorage.setItem('yamja_rider_orders', JSON.stringify(orders));
+        document.getElementById('manualTrackId').value = '';
+        renderOrders();
+    }
 
-// Send live coordinates to Google Sheet silently in the background
-try {
-await fetch(SCRIPT_URL, {
-method: 'POST',
-mode: 'no-cors',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({
-action: 'updateLocation',
-trackingId: trackingId,
-lat: lat,
-lng: lng
-})
-});
-} catch (e) {
-console.log('Location update error', e);
-}
-}, (error) => {
-console.log('GPS Error: ', error);
-}, { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 });
-}
-}
+    function updateStatus(index, newStatus) {
+        const order = orders[index];
+        order.status = newStatus;
+        localStorage.setItem('yamja_rider_orders', JSON.stringify(orders));
+        document.getElementById(`status-${index}`).innerText = newStatus;
 
-function addManualOrder() {
-const trackIdInput = document.getElementById('manualTrackId').value.trim();
-if (!trackIdInput) {
-alert('Please enter a valid tracking ID');
-return;
-}
+        // Send the updated status to the Google Sheet cloud
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'updateStatus',
+                trackingId: order.trackId,
+                status: newStatus
+            })
+        }).then(() => {
+            alert(`Order ${order.trackId} updated to: ${newStatus} (Synced to Cloud)`);
+        }).catch(err => {
+            console.error('Error syncing status:', err);
+            alert(`Updated locally, but cloud sync failed.`);
+        });
+    }
 
-orders.push({
-trackingId: trackIdInput,
-phone: '+971 50 123 4567',
-address: 'yas village',
-status: 'Order placed. Waiting for rider dispatch...'
-});
-
-document.getElementById('manualTrackId').value = '';
-renderOrders();
-}
-
-fetchOrders();
+    renderOrders();
 </script>
 
 </body>
