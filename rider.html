@@ -1,165 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Yamja Fresh Rider Dashboard</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; color: #333; }
-    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    h2 { text-align: center; color: #2c5e1a; border-bottom: 2px solid #2c5e1a; padding-bottom: 10px; margin-top: 0; }
-    .manual-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
-    .manual-box input { width: 100%; padding: 8px; margin: 5px 0 10px 0; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
-    .manual-box button { width: 100%; background: #16a34a; }
-    .order-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
-    .order-card p { margin: 6px 0; font-size: 14px; color: #4a5568; }
-    .order-card strong { color: #1a202c; }
-    .actions { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    button { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; color: white; font-weight: bold; font-size: 13px; transition: opacity 0.2s; }
-    .btn-dispatch { background: #d97706; }
-    .btn-out { background: #2563eb; }
-    .btn-delivered { background: #16a34a; }
-    .btn-gps { background: #7c3aed; }
-    .btn-clear { background: #dc2626; }
-    button:hover { opacity: 0.9; }
-    .no-orders { text-align: center; color: #718096; font-style: italic; padding: 20px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yamja Fresh - Rider Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        h2 { text-align: center; color: #2c5e1a; margin-top: 0; }
+        .refresh-box { text-align: center; margin-bottom: 20px; }
+        .refresh-box button { background-color: #3182ce; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .order-card { background: #ffffff; border: 1px solid #cbd5e0; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .order-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; margin-bottom: 8px; }
+        .order-header h4 { margin: 0; color: #2c5e1a; font-size: 16px; }
+        .order-detail { font-size: 14px; margin-bottom: 6px; color: #4a5568; }
+        .status-text { font-weight: bold; color: #d69e2e; margin: 10px 0; }
+        .action-buttons { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+        .action-buttons button { flex: 1; padding: 8px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; color: white; }
+        .btn-dispatch { background-color: #dd6b20; }
+        .btn-out { background-color: #3182ce; }
+        .btn-delivered { background-color: #38a169; }
+        .btn-gps { background-color: #805ad5; display: inline-block; padding: 4px 8px; color: white; text-decoration: none; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 5px; }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    <h2>Yamja Fresh Rider Dashboard</h2>
-
-    <!-- Manual Add Box (Cleaned up) -->
-    <div class="manual-box">
-      <label style="font-weight: bold; font-size: 13px; color: #166534;">Manually Add Tracking ID:</label>
-      <input type="text" id="manualId" placeholder="e.g. YFJ-9999">
-      <label style="font-weight: bold; font-size: 13px; color: #166534;">Customer Phone Number:</label>
-      <input type="text" id="manualPhone" placeholder="Customer Phone Number">
-      <button onclick="handleManualAction()">Add to Dashboard</button>
+<div class="container">
+    <h2>🚴 Yamja Fresh Rider Dashboard</h2>
+    <div class="refresh-box">
+        <button onclick="fetchOrdersFromCloud()">🔄 Refresh Orders from Cloud</button>
     </div>
-
-    <div id="ordersContainer">
-      <div class="no-orders">Loading active orders...</div>
+    <div id="orders-container">
+        <div style="text-align: center; color: #718096;" id="loading-msg">Loading active orders...</div>
     </div>
-  </div>
+</div>
 
-  <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxs3pi2MbK6sd-LXF2CmP18qR4Dvqoi3cTaL_GGko-T49VCYvRf13AfTOhgpS2zyGaplA/exec";
+<script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxs3pi2MbK6sd-LXF2CmP18qR4Dvqoi3cTaL_GGko-T49VCYvRf13AfTOhgpS2zyGaplA/exec';
 
-    function fetchOrders() {
-      const container = document.getElementById('ordersContainer');
-      
-      fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders`)
-        .then(response => response.json())
-        .then(data => {
-          if (!Array.isArray(data) || data.length === 0) {
-            container.innerHTML = '<div class="no-orders">No active orders found.</div>';
-            return;
-          }
+    window.onload = function() {
+        fetchOrdersFromCloud();
+    };
 
-          let html = '';
-          data.forEach(order => {
-            let tId = order.trackingId || 'N/A';
-            let phone = order.phone || 'N/A';
-            let address = order.address || 'N/A';
-            let items = order.items || 'N/A';
-            let total = order.grandTotal || '0';
-            let payment = order.paymentMethod || 'N/A';
-            let status = order.status || 'Order placed. Waiting for rider dispatch...';
-            
-            let mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+    function fetchOrdersFromCloud() {
+        const container = document.getElementById('orders-container');
+        container.innerHTML = '<div style="text-align: center; color: #718096;">Fetching live orders...</div>';
 
-            // Clear button appears ONLY if status is Delivered
-            let isDelivered = status.includes("Delivered");
-            let clearButtonHtml = isDelivered ? `<button class="btn-clear" onclick="clearTask('${tId}')">🗑️ Clear Task</button>` : '';
+        fetch(SCRIPT_URL)
+            .then(res => res.json())
+            .then(data => {
+                if (!Array.isArray(data) || data.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: #718096;">No active orders found in cloud.</div>';
+                    return;
+                }
 
-            html += `
-              <div class="order-card" id="card-${tId}">
-                <p><strong>Tracking ID:</strong> ${tId}</p>
-                <p><strong>Phone:</strong> <a href="tel:${phone}">${phone}</a></p>
-                <p><strong>Address:</strong> ${address}</p>
-                <p><strong>Items:</strong> ${items}</p>
-                <p><strong>Total:</strong> ₹${total} (${payment})</p>
-                <p><strong>Status:</strong> <span id="status-${tId}" style="color: #2c5e1a; font-weight: bold;">${status}</span></p>
-                <div class="actions">
-                  <a href="${mapsUrl}" target="_blank" style="text-decoration: none;"><button class="btn-gps">🗺️ GPS</button></a>
-                  <button class="btn-dispatch" onclick="updateStatus('${tId}', 'Dispatched')">Dispatch</button>
-                  <button class="btn-out" onclick="updateStatus('${tId}', 'Out for Delivery')">Out for Delivery</button>
-                  <button class="btn-delivered" onclick="updateStatus('${tId}', 'Delivered')">Delivered</button>
-                  ${clearButtonHtml}
-                </div>
-              </div>
-            `;
-          });
-          container.innerHTML = html;
-        })
-        .catch(error => {
-          console.error('Error fetching orders:', error);
-          container.innerHTML = '<div class="no-orders" style="color: red;">Failed to load orders. Check network connection.</div>';
-        });
-    }
-
-    function handleManualAction() {
-      const val = document.getElementById('manualId').value.trim();
-      const phoneVal = document.getElementById('manualPhone').value.trim();
-
-      if (!val) {
-        alert("Please enter a Tracking ID.");
-        return;
-      }
-
-      fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          trackingId: val, 
-          phone: phoneVal || 'N/A', 
-          address: 'Manual Entry Address', 
-          items: 'Manual Order Items', 
-          grandTotal: '0', 
-          paymentMethod: 'COD' 
-        })
-      }).then(() => {
-        alert("Tracking ID added successfully!");
-        location.reload();
-      });
+                let html = '';
+                data.forEach(order => {
+                    let mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(order.address)}`;
+                    html += `
+                        <div class="order-card" id="card-${order.trackingId}">
+                            <div class="order-header">
+                                <h4>Tracking ID: ${order.trackingId}</h4>
+                            </div>
+                            <div class="order-detail"><strong>Phone:</strong> <a href="tel:${order.phone}">${order.phone}</a></div>
+                            <div class="order-detail">
+                                <strong>Address:</strong> ${order.address} 
+                                <a href="${mapsUrl}" target="_blank" class="btn-gps">🗺️ GPS Directions</a>
+                            </div>
+                            <div class="order-detail"><strong>Items:</strong> ${order.items}</div>
+                            <div class="order-detail"><strong>Total:</strong> ₹${order.grandTotal} (${order.paymentMethod})</div>
+                            <div class="status-text" id="status-${order.trackingId}">Current Status: ${order.status}</div>
+                            <div class="action-buttons">
+                                <button class="btn-dispatch" onclick="updateStatus('${order.trackingId}', 'Rider Dispatched')">Dispatch</button>
+                                <button class="btn-out" onclick="updateStatus('${order.trackingId}', 'Out for Delivery')">Out for Delivery</button>
+                                <button class="btn-delivered" onclick="updateStatus('${order.trackingId}', 'Delivered Successfully')">Delivered</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            })
+            .catch(err => {
+                console.error(err);
+                container.innerHTML = '<div style="text-align: center; color: #e53e3e;">Failed to load orders from cloud. Check connection.</div>';
+            });
     }
 
     function updateStatus(trackingId, newStatus) {
-      fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: "updateStatus", trackingId: trackingId, status: newStatus })
-      })
-      .then(() => {
-        alert("Status updated successfully to: " + newStatus);
-        location.reload();
-      })
-      .catch(error => {
-        console.error('Error updating status:', error);
-        alert('Failed to update status.');
-      });
-    }
-
-    function clearTask(trackingId) {
-      if (confirm("Are you sure you want to clear/remove this finished task?")) {
-        fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: "updateStatus", trackingId: trackingId, status: "Cleared & Finished" })
+        document.getElementById('status-' + trackingId).innerText = "Current Status: " + newStatus;
+        
+        let payload = { action: "updateStatus", trackingId: trackingId, status: newStatus };
+        
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         }).then(() => {
-          alert("Task cleared successfully!");
-          location.reload();
+            alert(`Order ${trackingId} updated to: ${newStatus}`);
+            // If delivered, refresh the list so it automatically vanishes from the rider screen
+            if (newStatus.includes('Delivered')) {
+                setTimeout(fetchOrdersFromCloud, 1000);
+            }
+        }).catch(err => {
+            console.error('Error updating status:', err);
         });
-      }
     }
-
-    window.onload = fetchOrders;
-  </script>
+</script>
 
 </body>
 </html>
