@@ -407,11 +407,11 @@
 
     let cart = {};
     const STORE_UPI_ID = "yamjafresh@upi"; 
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxs3pi2MbK6sd-LXF2CmP18qR4Dvqoi3cTaL_GGko-T49VCYvRf13AfTOhgpS2zyGaplA/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxs3pi2MbK6sd-LXF2CmP18qR4Dvqoi3cTaL_GGko-T49VCYvRf13AfTOhgpS2zyGaplA/exec";
     
     let map = null;
     let riderMarker = null;
-    let statusInterval = null;
+    let activeTrackingId = null;
 
     window.onload = function() {
         for (let item in prices) {
@@ -545,6 +545,7 @@
     }
 
     function initializeTrackingMap(trackingId) {
+        activeTrackingId = trackingId;
         document.getElementById('tracking-section').style.display = 'block';
         document.getElementById('display-tracking-id').innerText = trackingId;
         
@@ -562,22 +563,22 @@
                 .openPopup();
         }
 
-        // Start polling live status from Google Sheets
-        checkLiveStatus(trackingId);
-        if (statusInterval) clearInterval(statusInterval);
-        statusInterval = setInterval(() => checkLiveStatus(trackingId), 5000);
+        // Fetch initial status and start polling every 5 seconds
+        fetchOrderStatus();
+        setInterval(fetchOrderStatus, 5000);
     }
 
-    function checkLiveStatus(trackingId) {
-        if (!SCRIPT_URL) return;
-        fetch(`${SCRIPT_URL}?action=getStatus&orderId=${trackingId}`)
+    function fetchOrderStatus() {
+        if (!activeTrackingId) return;
+
+        fetch(`${APPS_SCRIPT_URL}?action=getStatus&orderId=${activeTrackingId}`)
             .then(res => res.json())
             .then(data => {
                 if (data && data.status) {
                     document.getElementById('tracking-status-text').innerText = "Status: " + data.status;
                 }
             })
-            .catch(err => console.log('Status sync error:', err));
+            .catch(err => console.log('Error fetching status:', err));
     }
 
     function sendOrderData(paymentType, trackingId) {
@@ -601,8 +602,8 @@
             paymentMethod: paymentType
         };
 
-        if (SCRIPT_URL) {
-            fetch(SCRIPT_URL, {
+        if (APPS_SCRIPT_URL) {
+            fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
