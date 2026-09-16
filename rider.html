@@ -5,18 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yamja Fresh Rider Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; }
-    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    h2 { text-align: center; color: #333; }
-    .order-card { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .order-card p { margin: 5px 0; color: #555; }
-    .actions { margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap; }
-    button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
+    body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; color: #333; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    h2 { text-align: center; color: #2c5e1a; border-bottom: 2px solid #2c5e1a; padding-bottom: 10px; margin-top: 0; }
+    .order-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+    .order-card p { margin: 6px 0; font-size: 14px; color: #4a5568; }
+    .order-card strong { color: #1a202c; }
+    .actions { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
+    button { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; color: white; font-weight: bold; font-size: 13px; transition: opacity 0.2s; }
     .btn-dispatch { background: #d97706; }
     .btn-out { background: #2563eb; }
     .btn-delivered { background: #16a34a; }
-    .btn-clear { background: #dc2626; }
     button:hover { opacity: 0.9; }
+    .no-orders { text-align: center; color: #718096; font-style: italic; padding: 20px; }
   </style>
 </head>
 <body>
@@ -24,49 +25,85 @@
   <div class="container">
     <h2>Yamja Fresh Rider Dashboard</h2>
     <div id="ordersContainer">
-      <p>Loading active orders...</p>
+      <div class="no-orders">Loading active orders...</div>
     </div>
   </div>
 
   <script>
-    // Replace with your actual Google Apps Script Web App URL
-    const GOOGLE_SCRIPT_URL = "YOUR_APPS_SCRIPT_URL_HERE";
+    // Your exact Google Apps Script Web App URL
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxs3pi2MbK6sd-LXF2CmP18qR4Dvqoi3cTaL_GGko-T49VCYvRf13AfTOhgpS2zyGaplA/exec";
 
     function fetchOrders() {
-      // Fetch data from your backend
-      // (Using dummy structure or local storage sync for demonstration)
       const container = document.getElementById('ordersContainer');
       
-      // Example renderer for cards. Ensure your current status element has an ID or class matching status-{trackingId}
-      // If you are loading data dynamically, make sure to render buttons like this:
+      fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders`)
+        .then(response => response.json())
+        .then(data => {
+          if (!Array.isArray(data) || data.length === 0) {
+            container.innerHTML = '<div class="no-orders">No active orders found.</div>';
+            return;
+          }
+
+          let html = '';
+          data.forEach(order => {
+            let tId = order.trackingId || 'N/A';
+            let phone = order.phone || 'N/A';
+            let address = order.address || 'N/A';
+            let items = order.items || 'N/A';
+            let total = order.grandTotal || '0';
+            let payment = order.paymentMethod || 'N/A';
+            let status = order.status || 'Order placed. Waiting for rider dispatch...';
+
+            html += `
+              <div class="order-card">
+                <p><strong>Tracking ID:</strong> ${tId}</p>
+                <p><strong>Phone:</strong> <a href="tel:${phone}">${phone}</a></p>
+                <p><strong>Address:</strong> ${address}</p>
+                <p><strong>Items:</strong> ${items}</p>
+                <p><strong>Total:</strong> ₹${total} (${payment})</p>
+                <p><strong>Status:</strong> <span id="status-${tId}" style="color: #2c5e1a; font-weight: bold;">${status}</span></p>
+                <div class="actions">
+                  <button class="btn-dispatch" onclick="updateStatus('${tId}', 'Dispatched')">Dispatch</button>
+                  <button class="btn-out" onclick="updateStatus('${tId}', 'Out for Delivery')">Out for Delivery</button>
+                  <button class="btn-delivered" onclick="updateStatus('${tId}', 'Delivered')">Delivered</button>
+                </div>
+              </div>
+            `;
+          });
+          container.innerHTML = html;
+        })
+        .catch(error => {
+          console.error('Error fetching orders:', error);
+          container.innerHTML = '<div class="no-orders" style="color: red;">Failed to load orders. Check network connection.</div>';
+        });
     }
 
     function updateStatus(trackingId, newStatus) {
-      // Find the status element in the card
       const statusElement = document.getElementById(`status-${trackingId}`);
       
-      // LOCK CHECK: Prevent changes if the order is already delivered
+      // LOCK CHECK: Prevent changes if already delivered
       if (statusElement && statusElement.innerText.includes("Delivered")) {
         alert("⚠️ This order is already marked as Delivered and is locked to prevent accidental changes.");
         return; 
       }
 
-      // Send update to Google Sheets via Apps Script
       fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ trackingId: trackingId, status: newStatus })
+        body: JSON.stringify({ action: "updateStatus", trackingId: trackingId, status: newStatus })
       })
       .then(() => {
         alert("Status updated successfully to: " + newStatus);
-        location.reload(); // Refresh to reflect latest state
+        location.reload();
       })
       .catch(error => {
         console.error('Error updating status:', error);
         alert('Failed to update status.');
       });
     }
+
+    window.onload = fetchOrders;
   </script>
 
 </body>
