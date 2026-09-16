@@ -11,21 +11,21 @@
         .refresh-btn { background-color: #2c5e1a; color: white; border: none; padding: 10px 20px; font-size: 15px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 20px; }
         .refresh-btn:hover { background-color: #1e3f11; }
         
-        /* Manual Order Add Section */
-        .manual-add-box { background: #f0f4f1; border: 1px dashed #2c5e1a; padding: 12px; border-radius: 8px; margin-bottom: 20px; }
-        .manual-add-box input { width: 100%; padding: 8px; box-sizing: border-box; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 6px; }
-        .manual-add-box button { background: #4a5568; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
-
         .order-card { background: #ffffff; border: 1px solid #cbd5e0; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .order-card h4 { margin-top: 0; color: #2c5e1a; font-size: 18px; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; }
+        .order-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #edf2f7; padding-bottom: 6px; margin-bottom: 8px; }
+        .order-header h4 { margin: 0; color: #2c5e1a; font-size: 16px; }
+        .copy-btn { background: #edf2f7; border: 1px solid #cbd5e0; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold; }
+        .copy-btn:hover { background: #e2e8f0; }
+
         .order-detail { font-size: 14px; margin-bottom: 6px; color: #4a5568; }
         .status-text { font-weight: bold; color: #d69e2e; margin: 10px 0; }
         
-        .action-buttons { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-        .action-buttons button { flex: 1; padding: 8px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; color: white; }
+        .action-buttons { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+        .action-buttons button { flex: 1; padding: 8px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; color: white; }
         .btn-dispatch { background-color: #dd6b20; }
         .btn-out { background-color: #3182ce; }
         .btn-delivered { background-color: #38a169; }
+        .btn-delete { background-color: #e53e3e; flex: 0.5; }
     </style>
 </head>
 <body>
@@ -33,15 +33,6 @@
 <div class="container">
     <h2>🚴 Yamja Fresh Rider Dashboard</h2>
     <button class="refresh-btn" onclick="loadOrders()">🔄 Refresh Orders</button>
-
-    <!-- Manual Order Injection Box -->
-    <div class="manual-add-box">
-        <label style="font-size: 13px; font-weight: bold; color: #2c5e1a; display: block; margin-bottom: 5px;">➕ Manually Add Tracking ID:</label>
-        <input type="text" id="manual-tid" placeholder="e.g. YFJ-9999">
-        <input type="text" id="manual-phone" placeholder="Customer Phone Number">
-        <button onclick="addManualOrder()">Add to Dashboard</button>
-    </div>
-
     <div id="orders-list">Loading orders...</div>
 </div>
 
@@ -50,17 +41,18 @@
 
     window.onload = function() {
         loadOrders();
+        // Auto-refresh every 10 seconds to catch live orders
+        setInterval(loadOrders, 10000);
     };
 
     function loadOrders() {
         let listEl = document.getElementById('orders-list');
-        listEl.innerHTML = "Fetching latest orders...";
 
         fetch(APPS_SCRIPT_URL)
             .then(response => response.json())
             .then(data => {
                 if (!data || data.length === 0) {
-                    listEl.innerHTML = "<p>No active orders found.</p>";
+                    listEl.innerHTML = "<p style='text-align:center; color:#718096;'>No active orders found.</p>";
                     return;
                 }
 
@@ -68,16 +60,20 @@
                 data.forEach(order => {
                     html += `
                         <div class="order-card">
-                            <h4>Tracking ID: ${order.trackingId}</h4>
-                            <div class="order-detail"><strong>Phone:</strong> ${order.phone}</div>
+                            <div class="order-header">
+                                <h4>Tracking ID: ${order.trackingId}</h4>
+                                <button class="copy-btn" onclick="copyId('${order.trackingId}')">📋 Copy ID</button>
+                            </div>
+                            <div class="order-detail"><strong>Phone:</strong> <a href="tel:${order.phone}">${order.phone}</a></div>
                             <div class="order-detail"><strong>Address:</strong> ${order.address}</div>
                             <div class="order-detail"><strong>Items:</strong> ${order.items}</div>
                             <div class="order-detail"><strong>Total:</strong> ₹${order.grandTotal} (${order.paymentMethod})</div>
                             <div class="status-text">Current Status: ${order.status}</div>
                             <div class="action-buttons">
-                                <button class="btn-dispatch" onclick="updateStatus('${order.trackingId}', 'Rider dispatched and picking up order.')">Dispatch Rider</button>
+                                <button class="btn-dispatch" onclick="updateStatus('${order.trackingId}', 'Rider dispatched and picking up order.')">Dispatch</button>
                                 <button class="btn-out" onclick="updateStatus('${order.trackingId}', 'Out for Delivery')">Out for Delivery</button>
                                 <button class="btn-delivered" onclick="updateStatus('${order.trackingId}', 'Delivered Successfully')">Delivered</button>
+                                <button class="btn-delete" onclick="deleteOrder('${order.trackingId}')">🗑️ Clear</button>
                             </div>
                         </div>
                     `;
@@ -85,13 +81,19 @@
                 listEl.innerHTML = html;
             })
             .catch(err => {
-                listEl.innerHTML = "<p style='color: red;'>Error loading orders. Check script URL.</p>";
+                listEl.innerHTML = "<p style='color: red;'>Error loading orders. Check connection.</p>";
                 console.error(err);
             });
     }
 
+    function copyId(trackingId) {
+        navigator.clipboard.writeText(trackingId).then(() => {
+            alert('Copied Tracking ID: ' + trackingId);
+        });
+    }
+
     function updateStatus(trackingId, newStatus) {
-        let payload = { trackingId: trackingId, status: newStatus };
+        let payload = { action: "updateStatus", trackingId: trackingId, status: newStatus };
         
         fetch(APPS_SCRIPT_URL, {
             method: 'POST',
@@ -100,24 +102,14 @@
             body: JSON.stringify(payload)
         }).then(() => {
             alert('Status updated to: ' + newStatus);
-            setTimeout(loadOrders, 1000);
+            setTimeout(loadOrders, 800);
         }).catch(err => alert('Error updating status'));
     }
 
-    function addManualOrder() {
-        let tid = document.getElementById('manual-tid').value.trim();
-        let phone = document.getElementById('manual-phone').value.trim();
+    function deleteOrder(trackingId) {
+        if (!confirm('Are you sure you want to remove order ' + trackingId + ' from the active list?')) return;
 
-        if (!tid) { alert('Please enter a Tracking ID'); return; }
-
-        let payload = {
-            trackingId: tid,
-            phone: phone || 'Manual Entry',
-            address: 'Manual Entry',
-            items: 'Custom Order',
-            grandTotal: '0',
-            paymentMethod: 'COD'
-        };
+        let payload = { action: "deleteOrder", trackingId: trackingId };
 
         fetch(APPS_SCRIPT_URL, {
             method: 'POST',
@@ -125,11 +117,9 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         }).then(() => {
-            alert('Tracking ID ' + tid + ' added!');
-            document.getElementById('manual-tid').value = '';
-            document.getElementById('manual-phone').value = '';
-            setTimeout(loadOrders, 1000);
-        });
+            alert('Order cleared.');
+            setTimeout(loadOrders, 800);
+        }).catch(err => alert('Error deleting order'));
     }
 </script>
 
