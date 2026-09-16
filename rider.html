@@ -21,7 +21,7 @@
         .btn-dispatch { background-color: #dd6b20; }
         .btn-out { background-color: #3182ce; }
         .btn-delivered { background-color: #38a169; }
-        .btn-gps { background-color: #2b6cb0; display: block; width: 100%; margin-top: 8px; padding: 10px; background: #319795; color: white; text-align: center; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; }
+        .btn-gps { background-color: #319795; display: block; width: 100%; margin-top: 8px; padding: 10px; color: white; text-align: center; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; }
         .btn-delete { background-color: #e53e3e; flex: 0.5; }
     </style>
 </head>
@@ -102,14 +102,22 @@
 
     function updateStatus(trackingId, newStatus) {
         document.getElementById('status-' + trackingId).innerText = "Current Status: " + newStatus;
-        let payload = { action: "updateStatus", trackingId: trackingId, status: newStatus };
+        
+        // Sending both trackingId and orderId to ensure complete compatibility
+        let payload = { 
+            action: "updateStatus", 
+            trackingId: trackingId, 
+            orderId: trackingId, 
+            status: newStatus 
+        };
+        
         fetch(SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         }).then(() => {
-            alert('Status updated successfully!');
+            console.log('Status synced successfully');
         });
     }
 
