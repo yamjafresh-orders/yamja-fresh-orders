@@ -14,12 +14,13 @@
     .order-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
     .order-card p { margin: 6px 0; font-size: 14px; color: #4a5568; }
     .order-card strong { color: #1a202c; }
-    .actions { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .actions { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     button { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; color: white; font-weight: bold; font-size: 13px; transition: opacity 0.2s; }
     .btn-dispatch { background: #d97706; }
     .btn-out { background: #2563eb; }
     .btn-delivered { background: #16a34a; }
     .btn-gps { background: #7c3aed; }
+    .btn-clear { background: #dc2626; }
     button:hover { opacity: 0.9; }
     .no-orders { text-align: center; color: #718096; font-style: italic; padding: 20px; }
   </style>
@@ -29,10 +30,10 @@
   <div class="container">
     <h2>Yamja Fresh Rider Dashboard</h2>
 
-    <!-- Manual Add / CLEAR Box -->
+    <!-- Manual Add Box (Cleaned up) -->
     <div class="manual-box">
-      <label style="font-weight: bold; font-size: 13px; color: #166534;">Manually Add Tracking ID (Type CLEAR to reset):</label>
-      <input type="text" id="manualId" placeholder="e.g. YFJ-9999 or CLEAR">
+      <label style="font-weight: bold; font-size: 13px; color: #166534;">Manually Add Tracking ID:</label>
+      <input type="text" id="manualId" placeholder="e.g. YFJ-9999">
       <label style="font-weight: bold; font-size: 13px; color: #166534;">Customer Phone Number:</label>
       <input type="text" id="manualPhone" placeholder="Customer Phone Number">
       <button onclick="handleManualAction()">Add to Dashboard</button>
@@ -67,11 +68,14 @@
             let payment = order.paymentMethod || 'N/A';
             let status = order.status || 'Order placed. Waiting for rider dispatch...';
             
-            // Google Maps GPS Link
             let mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 
+            // Clear button appears ONLY if status is Delivered
+            let isDelivered = status.includes("Delivered");
+            let clearButtonHtml = isDelivered ? `<button class="btn-clear" onclick="clearTask('${tId}')">🗑️ Clear Task</button>` : '';
+
             html += `
-              <div class="order-card">
+              <div class="order-card" id="card-${tId}">
                 <p><strong>Tracking ID:</strong> ${tId}</p>
                 <p><strong>Phone:</strong> <a href="tel:${phone}">${phone}</a></p>
                 <p><strong>Address:</strong> ${address}</p>
@@ -79,10 +83,11 @@
                 <p><strong>Total:</strong> ₹${total} (${payment})</p>
                 <p><strong>Status:</strong> <span id="status-${tId}" style="color: #2c5e1a; font-weight: bold;">${status}</span></p>
                 <div class="actions">
-                  <a href="${mapsUrl}" target="_blank" style="text-decoration: none;"><button class="btn-gps">🗺️ GPS Map</button></a>
+                  <a href="${mapsUrl}" target="_blank" style="text-decoration: none;"><button class="btn-gps">🗺️ GPS</button></a>
                   <button class="btn-dispatch" onclick="updateStatus('${tId}', 'Dispatched')">Dispatch</button>
                   <button class="btn-out" onclick="updateStatus('${tId}', 'Out for Delivery')">Out for Delivery</button>
                   <button class="btn-delivered" onclick="updateStatus('${tId}', 'Delivered')">Delivered</button>
+                  ${clearButtonHtml}
                 </div>
               </div>
             `;
@@ -99,20 +104,11 @@
       const val = document.getElementById('manualId').value.trim();
       const phoneVal = document.getElementById('manualPhone').value.trim();
 
-      if (val.toUpperCase() === "CLEAR") {
-        alert("Tracking ID CLEAR added!");
-        document.getElementById('manualId').value = '';
-        document.getElementById('manualPhone').value = '';
-        location.reload();
-        return;
-      }
-
       if (!val) {
-        alert("Please enter a Tracking ID or CLEAR.");
+        alert("Please enter a Tracking ID.");
         return;
       }
 
-      // Send manual order to backend
       fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
@@ -132,13 +128,6 @@
     }
 
     function updateStatus(trackingId, newStatus) {
-      const statusElement = document.getElementById(`status-${trackingId}`);
-      
-      if (statusElement && statusElement.innerText.includes("Delivered")) {
-        alert("⚠️ This order is already marked as Delivered and is locked to prevent accidental changes.");
-        return; 
-      }
-
       fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
@@ -153,6 +142,20 @@
         console.error('Error updating status:', error);
         alert('Failed to update status.');
       });
+    }
+
+    function clearTask(trackingId) {
+      if (confirm("Are you sure you want to clear/remove this finished task?")) {
+        fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: "updateStatus", trackingId: trackingId, status: "Cleared & Finished" })
+        }).then(() => {
+          alert("Task cleared successfully!");
+          location.reload();
+        });
+      }
     }
 
     window.onload = fetchOrders;
