@@ -5,70 +5,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yamja Fresh Feedback</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
-        .container { max-width: 500px; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: auto; }
-        .logo-container { text-align: center; margin-bottom: 20px; }
-        .logo-container img { width: 120px; max-width: 100%; height: auto; display: block; margin: 0 auto; }
-        label { font-weight: bold; display: block; margin-top: 15px; }
-        select, textarea, input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; background: #d9534f; color: white; padding: 12px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; margin-top: 20px; }
-        button:hover { background: #c9302c; }
-        #response-msg { text-align: center; margin-top: 15px; font-weight: bold; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            color: #555;
+        }
+        select, textarea, input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            background-color: #d9534f;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #c9302c;
+        }
+        #response-msg {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="logo-container">
-        <img src="Untitled_Artwork.PNG" alt="Yamja Fresh Logo">
-    </div>
-    
+    <h2>Yamja Fresh Feedback</h2>
     <form id="feedbackForm">
         <label for="experience">Overall Experience:</label>
-        <select id="experience" name="experience" required>
+        <select id="experience" required>
             <option value="">Select...</option>
-            <option value="Excellent">😄 Excellent</option>
-            <option value="Good">🙂 Good</option>
+            <option value="Excellent">⭐ Excellent</option>
+            <option value="Good">👍 Good</option>
+            <option value="Average">😐 Average</option>
             <option value="Needs Improvement">⚠️ Needs Improvement</option>
         </select>
 
         <label for="cleanliness">Cleanliness:</label>
-        <select id="cleanliness" name="cleanliness" required>
+        <select id="cleanliness" required>
             <option value="">Select...</option>
-            <option value="Spotless & Fresh">✨ Spotless & Fresh</option>
+            <option value="Spotless">✨ Spotless</option>
+            <option value="Good">👍 Good</option>
             <option value="Needs Attention">🧹 Needs Attention</option>
         </select>
 
         <label for="quality">Quality:</label>
-        <select id="quality" name="quality" required>
+        <select id="quality" required>
             <option value="">Select...</option>
-            <option value="Excellent Cut & Texture">🥩 Excellent Cut & Texture</option>
+            <option value="Fresh & High Quality">🥩 Fresh & High Quality</option>
+            <option value="Average">😐 Average</option>
             <option value="Disappointing">❌ Disappointing</option>
         </select>
 
         <label for="pricing">Pricing:</label>
-        <select id="pricing" name="pricing" required>
+        <select id="pricing" required>
             <option value="">Select...</option>
-            <option value="Fair & Reasonable">💰 Fair & Reasonable</option>
+            <option value="Fair & Reasonable">💵 Fair & Reasonable</option>
             <option value="A Bit High">📈 A Bit High</option>
+            <option value="Too Expensive">💸 Too Expensive</option>
         </select>
 
         <label for="staff">Staff:</label>
-        <select id="staff" name="staff" required>
+        <select id="staff" required>
             <option value="">Select...</option>
-            <option value="Very Polite & Helpful">🤝 Very Polite & Helpful</option>
-            <option value="Professional">👔 Professional</option>
-            <option value="Unhelpful / Poor">⚠️ Unhelpful / Poor</option>
+            <option value="Very Polite & Helpful">😊 Very Polite & Helpful</option>
+            <option value="Average">😐 Average</option>
+            <option value="Unhelpful">❌ Unhelpful</option>
         </select>
 
         <label for="comments">Comments / Feedback:</label>
-        <textarea id="comments" name="comments" rows="3" placeholder="Tell us what went wrong or how we can improve..."></textarea>
+        <textarea id="comments" rows="3" placeholder="Tell us how we can improve..."></textarea>
 
         <label for="phone">Phone Number:</label>
-        <input type="tel" id="phone" name="phone" placeholder="Your phone number">
+        <input type="tel" id="phone" placeholder="Enter your phone number">
 
         <label for="email">Email Address:</label>
-        <input type="email" id="email" name="email" placeholder="Your email address">
+        <input type="email" id="email" placeholder="Enter your email address">
 
         <button type="submit" id="submitBtn">Submit Feedback</button>
     </form>
@@ -101,10 +146,10 @@
         fetch(scriptURL, {
             method: 'POST',
             body: JSON.stringify(formData),
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            mode: 'no-cors'
         })
-        .then(response => response.json())
-        .then(data => {
+        .then(() => {
             responseMsg.style.color = 'green';
             responseMsg.textContent = 'Thank you! Your feedback has been recorded.';
             form.reset();
@@ -112,7 +157,7 @@
             submitBtn.textContent = 'Submit Feedback';
         })
         .catch(error => {
-            console.error('Error!', error.message);
+            console.error('Error!', error);
             responseMsg.style.color = 'red';
             responseMsg.textContent = 'Submission failed. Please try again.';
             submitBtn.disabled = false;
