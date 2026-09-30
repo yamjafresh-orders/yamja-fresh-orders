@@ -3,96 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yamja Fresh Guest Feedback</title>
+    <title>Yamja Fresh Feedback</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f7f6; padding: 15px; color: #222; max-width: 480px; margin: auto; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-        .logo-container { text-align: center; margin-bottom: 20px; margin-top: 5px; }
-        /* Made the logo significantly larger so text is easily readable */
-        .logo-container img { max-width: 220px; height: auto; object-fit: contain; }
-        label { display: block; margin-top: 15px; font-weight: 600; font-size: 14px; color: #333; }
-        select, textarea, input { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #ccd5ae; border-radius: 6px; box-sizing: border-box; font-size: 14px; background: #fff; }
-        button { background: #2d6a4f; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; margin-top: 25px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        button:hover { background: #1b4332; }
-        .thank-you { display: none; text-align: center; color: #2d6a4f; padding: 30px 0; }
-        .thank-you h2 { font-size: 24px; margin-bottom: 10px; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; }
+        .container { max-width: 500px; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: auto; }
+        h2 { text-align: center; color: #d9534f; }
+        label { font-weight: bold; display: block; margin-top: 15px; }
+        select, textarea, input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; background: #d9534f; color: white; padding: 12px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; margin-top: 20px; }
+        button:hover { background: #c9302c; }
+        #response-msg { text-align: center; margin-top: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="card" id="formCard">
-    <div class="logo-container">
-        <img src="Untitled_Artwork.PNG" alt="Yamja Fresh Logo">
-    </div>
-    
-    <form id="feedbackForm" onsubmit="submitForm(event)">
-        <label>1. Overall Experience</label>
-        <select id="experience" required>
-            <option value="">Select option</option>
-            <option value="Excellent">😊 Excellent</option>
-            <option value="Good">😐 Good</option>
-            <option value="Needs Improvement">🙁 Needs Improvement</option>
+<div class="container">
+    <h2>Yamja Fresh Feedback</h2>
+    <form id="feedbackForm">
+        <label for="experience">Overall Experience:</label>
+        <select id="experience" name="experience" required>
+            <option value="">Select...</option>
+            <option value="Excellent">Excellent</option>
+            <option value="Good">Good</option>
+            <option value="Needs Improvement">Needs Improvement</option>
         </select>
 
-        <label>2. Store Cleanliness & Hygiene</label>
-        <select id="cleanliness" required>
-            <option value="">Select rating</option>
-            <option value="Spotless & Fresh">✨ Spotless & Fresh</option>
-            <option value="Acceptable">👍 Acceptable</option>
-            <option value="Needs Attention">⚠️ Needs Attention</option>
+        <label for="cleanliness">Cleanliness:</label>
+        <select id="cleanliness" name="cleanliness" required>
+            <option value="">Select...</option>
+            <option value="Spotless & Fresh">Spotless & Fresh</option>
+            <option value="Needs Attention">Needs Attention</option>
         </select>
 
-        <label>3. Meat Cut Quality & Freshness</label>
-        <select id="quality" required>
-            <option value="">Select rating</option>
-            <option value="Excellent Cut & Texture">🥩 Excellent Cut & Texture</option>
-            <option value="Good">👍 Good</option>
-            <option value="Disappointing">⚠️ Disappointing</option>
+        <label for="quality">Quality:</label>
+        <select id="quality" name="quality" required>
+            <option value="">Select...</option>
+            <option value="Excellent Cut & Texture">Excellent Cut & Texture</option>
+            <option value="Disappointing">Disappointing</option>
         </select>
 
-        <label>4. Pricing & Value Perception</label>
-        <select id="pricing" required>
-            <option value="">Select option</option>
-            <option value="Great Value for the quality">💎 Great Value for the quality</option>
-            <option value="Fair & Reasonable">⚖️ Fair & Reasonable</option>
-            <option value="A Bit High">📈 A Bit High</option>
+        <label for="pricing">Pricing:</label>
+        <select id="pricing" name="pricing" required>
+            <option value="">Select...</option>
+            <option value="Fair & Reasonable">Fair & Reasonable</option>
+            <option value="A Bit High">A Bit High</option>
         </select>
 
-        <label>5. Staff Behavior & Service</label>
-        <select id="staff" required>
-            <option value="">Select option</option>
-            <option value="Very Polite & Helpful">🤝 Very Polite & Helpful</option>
-            <option value="Professional">💼 Professional</option>
-            <option value="Unhelpful / Slow">⚠️️ Unhelpful / Slow</option>
+        <label for="staff">Staff:</label>
+        <select id="staff" name="staff" required>
+            <option value="">Select...</option>
+            <option value="Very Polite & Helpful">Very Polite & Helpful</option>
+            <option value="Professional">Professional</option>
+            <option value="Unhelpful / Poor">Unhelpful / Poor</option>
         </select>
 
-        <label>6. Any comments or suggestions?</label>
-        <textarea id="comments" rows="3" placeholder="Tell us what you loved or how we can improve..."></textarea>
+        <label for="comments">Comments / Feedback:</label>
+        <textarea id="comments" name="comments" rows="3" placeholder="Tell us what went wrong or how we can improve..."></textarea>
 
-        <label>7. Phone Number (Optional)</label>
-        <input type="tel" id="phone" placeholder="Enter phone number">
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" placeholder="Your phone number">
 
-        <label>8. Email Address (Optional)</label>
-        <input type="email" id="email" placeholder="Enter email address">
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" placeholder="Your email address">
 
         <button type="submit" id="submitBtn">Submit Feedback</button>
     </form>
-</div>
-
-<div class="card thank-you" id="thankYouCard">
-    <div class="logo-container">
-        <img src="Untitled_Artwork.PNG" alt="Yamja Fresh Logo" style="max-width: 150px;">
-    </div>
-    <h2>Thank You!</h2>
-    <p>Your voice helps us keep Yamja Fresh clean, honest, and reliable for everyone.</p>
+    <div id="response-msg"></div>
 </div>
 
 <script>
-    function submitForm(e) {
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwMvjIsEFBXmTttwC8DhrBEcZC81MwYU6CQ6ox6A98Yf03Wn7JA0lSrxrYYvZhvdeOE/exec';
+    const form = document.getElementById('feedbackForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const responseMsg = document.getElementById('response-msg');
+
+    form.addEventListener('submit', e => {
         e.preventDefault();
-        document.getElementById('submitBtn').innerText = "Submitting...";
-        
-        var formData = {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+        responseMsg.textContent = '';
+
+        const formData = {
             experience: document.getElementById('experience').value,
             cleanliness: document.getElementById('cleanliness').value,
             quality: document.getElementById('quality').value,
@@ -103,22 +94,27 @@
             email: document.getElementById('email').value
         };
 
-        var scriptURL = "https://script.google.com/macros/s/AKfycbwMvjIsEFBXmTttwC8DhrBEcZC81MwYU6CQ6ox6A98Yf03Wn7JA0lSrxrYYvZhvdeOE/exec";
-
         fetch(scriptURL, {
             method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify(formData)
+            body: JSON.stringify(formData),
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
         })
-        .then(response => {
-            document.getElementById('formCard').style.display = 'none';
-            document.getElementById('thankYouCard').style.display = 'block';
+        .then(response => response.json())
+        .then(data => {
+            responseMsg.style.color = 'green';
+            responseMsg.textContent = 'Thank you! Your feedback has been recorded.';
+            form.reset();
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Feedback';
         })
         .catch(error => {
-            alert('Error submitting. Please try again.');
-            document.getElementById('submitBtn').innerText = "Submit Feedback";
+            console.error('Error!', error.message);
+            responseMsg.style.color = 'red';
+            responseMsg.textContent = 'Submission failed. Please try again.';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Feedback';
         });
-    }
+    });
 </script>
 
 </body>
