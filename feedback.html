@@ -7,11 +7,9 @@
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f7f6; padding: 15px; color: #222; max-width: 480px; margin: auto; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-        .logo-container { text-align: center; margin-bottom: 10px; }
-        /* Changed border-radius to 8px so it displays the full rectangular logo cleanly without cutting the sun rays */
-        .logo-container img { max-width: 140px; height: auto; border-radius: 8px; object-fit: contain; }
-        h2 { color: #1b4332; text-align: center; margin-bottom: 5px; margin-top: 5px; }
-        .subtitle { text-align: center; font-size: 13px; color: #666; margin-bottom: 20px; }
+        .logo-container { text-align: center; margin-bottom: 20px; margin-top: 5px; }
+        /* Made the logo significantly larger so text is easily readable */
+        .logo-container img { max-width: 220px; height: auto; object-fit: contain; }
         label { display: block; margin-top: 15px; font-weight: 600; font-size: 14px; color: #333; }
         select, textarea, input { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #ccd5ae; border-radius: 6px; box-sizing: border-box; font-size: 14px; background: #fff; }
         button { background: #2d6a4f; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; margin-top: 25px; font-size: 16px; font-weight: bold; cursor: pointer; }
@@ -26,8 +24,6 @@
     <div class="logo-container">
         <img src="Untitled_Artwork.PNG" alt="Yamja Fresh Logo">
     </div>
-    <h2>Yamja Fresh</h2>
-    <div class="subtitle">Promise of Pure Hygiene</div>
     
     <form id="feedbackForm" onsubmit="submitForm(event)">
         <label>1. Overall Experience</label>
@@ -67,7 +63,7 @@
             <option value="">Select option</option>
             <option value="Very Polite & Helpful">🤝 Very Polite & Helpful</option>
             <option value="Professional">💼 Professional</option>
-            <option value="Unhelpful / Slow">⚠️ Unhelpful / Slow</option>
+            <option value="Unhelpful / Slow">⚠️️ Unhelpful / Slow</option>
         </select>
 
         <label>6. Any comments or suggestions?</label>
@@ -85,7 +81,7 @@
 
 <div class="card thank-you" id="thankYouCard">
     <div class="logo-container">
-        <img src="Untitled_Artwork.PNG" alt="Yamja Fresh Logo" style="max-width: 100px;">
+        <img src="Untitled_Artwork.PNG" alt="Yamja Fresh Logo" style="max-width: 150px;">
     </div>
     <h2>Thank You!</h2>
     <p>Your voice helps us keep Yamja Fresh clean, honest, and reliable for everyone.</p>
