@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yamja Fresh Feedback</title>
+    <title>Yamja Fresh - Customer Feedback</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,158 +12,155 @@
             padding: 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
         }
         .container {
             background: #ffffff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             width: 100%;
             max-width: 400px;
+            text-align: center;
+        }
+        .logo {
+            max-width: 100px;
+            height: auto;
+            margin-bottom: 10px;
         }
         h2 {
-            text-align: center;
-            color: #333;
+            color: #b30000;
+            margin-bottom: 20px;
+            margin-top: 0;
         }
         label {
             font-weight: bold;
             display: block;
-            margin-top: 15px;
-            color: #555;
+            margin-top: 12px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #333;
+            text-align: left;
         }
         select, textarea, input {
             width: 100%;
             padding: 10px;
-            margin-top: 5px;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 5px;
+            font-size: 14px;
             box-sizing: border-box;
+            background-color: #fff;
+        }
+        textarea {
+            resize: vertical;
+            height: 80px;
         }
         button {
             width: 100%;
-            background-color: #d9534f;
+            background-color: #cc0000;
             color: white;
             padding: 12px;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
             margin-top: 20px;
         }
         button:hover {
-            background-color: #c9302c;
+            background-color: #990000;
         }
-        #response-msg {
+        #statusMessage {
             text-align: center;
             margin-top: 15px;
             font-weight: bold;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <img src="logo.png" alt="Yamja Fresh Logo" class="logo">
     <h2>Yamja Fresh Feedback</h2>
-    <form id="feedbackForm">
+
+    <!-- Hidden iframe catches the response silently to avoid CORS errors -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) { successMessage(); }"></iframe>
+
+    <form id="feedbackForm" action="https://script.google.com/macros/s/AKfycbwMvjIsEFBXmTttwC8DhrBEcZC81MwYU6CQ6ox6A98Yf03Wn7JA0lSrxrYYvZhvdeOE/exec" method="POST" target="hidden_iframe">
+        
         <label for="experience">Overall Experience:</label>
-        <select id="experience" required>
-            <option value="">Select...</option>
+        <select id="experience" name="experience">
             <option value="Excellent">⭐ Excellent</option>
             <option value="Good">👍 Good</option>
-            <option value="Average">😐 Average</option>
             <option value="Needs Improvement">⚠️ Needs Improvement</option>
         </select>
 
         <label for="cleanliness">Cleanliness:</label>
-        <select id="cleanliness" required>
-            <option value="">Select...</option>
-            <option value="Spotless">✨ Spotless</option>
-            <option value="Good">👍 Good</option>
-            <option value="Needs Attention">🧹 Needs Attention</option>
+        <select id="cleanliness" name="cleanliness">
+            <option value="Very Clean">✨ Very Clean</option>
+            <option value="Clean">🧹 Clean</option>
+            <option value="Needs Attention">⚠️ Needs Attention</option>
         </select>
 
         <label for="quality">Quality:</label>
-        <select id="quality" required>
-            <option value="">Select...</option>
-            <option value="Fresh & High Quality">🥩 Fresh & High Quality</option>
-            <option value="Average">😐 Average</option>
+        <select id="quality" name="quality">
+            <option value="Premium">🥩 Premium</option>
+            <option value="Good Quality">👍 Good Quality</option>
             <option value="Disappointing">❌ Disappointing</option>
         </select>
 
         <label for="pricing">Pricing:</label>
-        <select id="pricing" required>
-            <option value="">Select...</option>
-            <option value="Fair & Reasonable">💵 Fair & Reasonable</option>
+        <select id="pricing" name="pricing">
+            <option value="Fair & Affordable">💵 Fair & Affordable</option>
+            <option value="Reasonable">🏷️ Reasonable</option>
             <option value="A Bit High">📈 A Bit High</option>
-            <option value="Too Expensive">💸 Too Expensive</option>
         </select>
 
         <label for="staff">Staff:</label>
-        <select id="staff" required>
-            <option value="">Select...</option>
+        <select id="staff" name="staff">
             <option value="Very Polite & Helpful">😊 Very Polite & Helpful</option>
-            <option value="Average">😐 Average</option>
-            <option value="Unhelpful">❌ Unhelpful</option>
+            <option value="Polite">🤝 Polite</option>
+            <option value="Unhelpful">⚠️ Unhelpful</option>
         </select>
 
         <label for="comments">Comments / Feedback:</label>
-        <textarea id="comments" rows="3" placeholder="Tell us how we can improve..."></textarea>
+        <textarea id="comments" name="comments" placeholder="Tell us how we did..."></textarea>
 
         <label for="phone">Phone Number:</label>
-        <input type="tel" id="phone" placeholder="Enter your phone number">
+        <input type="tel" id="phone" name="phone" placeholder="Enter phone number">
 
         <label for="email">Email Address:</label>
-        <input type="email" id="email" placeholder="Enter your email address">
+        <input type="email" id="email" name="email" placeholder="Enter email address">
 
         <button type="submit" id="submitBtn">Submit Feedback</button>
+        <div id="statusMessage"></div>
     </form>
-    <div id="response-msg"></div>
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwMvjIsEFBXmTttwC8DhrBEcZC81MwYU6CQ6ox6A98Yf03Wn7JA0lSrxrYYvZhvdeOE/exec';
+    let submitted = false;
+
     const form = document.getElementById('feedbackForm');
     const submitBtn = document.getElementById('submitBtn');
-    const responseMsg = document.getElementById('response-msg');
+    const statusMessage = document.getElementById('statusMessage');
 
-    form.addEventListener('submit', e => {
-        e.preventDefault();
+    form.addEventListener('submit', function() {
+        submitted = true;
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Submitting...';
-        responseMsg.textContent = '';
-
-        const formData = {
-            experience: document.getElementById('experience').value,
-            cleanliness: document.getElementById('cleanliness').value,
-            quality: document.getElementById('quality').value,
-            pricing: document.getElementById('pricing').value,
-            staff: document.getElementById('staff').value,
-            comments: document.getElementById('comments').value,
-            phone: document.getElementById('phone').value,
-            email: document.getElementById('email').value
-        };
-
-        fetch(scriptURL, {
-            method: 'POST',
-            body: JSON.stringify(formData),
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            mode: 'no-cors'
-        })
-        .then(() => {
-            responseMsg.style.color = 'green';
-            responseMsg.textContent = 'Thank you! Your feedback has been recorded.';
-            form.reset();
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Feedback';
-        })
-        .catch(error => {
-            console.error('Error!', error);
-            responseMsg.style.color = 'red';
-            responseMsg.textContent = 'Submission failed. Please try again.';
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Feedback';
-        });
+        submitBtn.textContent = "Submitting...";
+        statusMessage.style.color = "#333";
+        statusMessage.textContent = "Sending feedback...";
     });
+
+    function successMessage() {
+        statusMessage.style.color = "green";
+        statusMessage.textContent = "Thank you! Feedback submitted successfully.";
+        form.reset();
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Feedback";
+        submitted = false;
+    }
 </script>
 
 </body>
