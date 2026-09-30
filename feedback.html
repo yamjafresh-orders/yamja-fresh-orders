@@ -7,7 +7,9 @@
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f7f6; padding: 15px; color: #222; max-width: 480px; margin: auto; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-        h2 { color: #1b4332; text-align: center; margin-bottom: 5px; }
+        .logo-container { text-align: center; margin-bottom: 10px; }
+        .logo-container img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2px solid #2d6a4f; }
+        h2 { color: #1b4332; text-align: center; margin-bottom: 5px; margin-top: 5px; }
         .subtitle { text-align: center; font-size: 13px; color: #666; margin-bottom: 20px; }
         label { display: block; margin-top: 15px; font-weight: 600; font-size: 14px; color: #333; }
         select, textarea, input { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #ccd5ae; border-radius: 6px; box-sizing: border-box; font-size: 14px; background: #fff; }
@@ -20,8 +22,11 @@
 <body>
 
 <div class="card" id="formCard">
+    <div class="logo-container">
+        <img src="Untitled_Artwork.PNG" alt="Yamja Fresh Logo">
+    </div>
     <h2>Yamja Fresh</h2>
-    <div class="subtitle">Help us maintain the highest standard for your family.</div>
+    <div class="subtitle">Promise of Pure Hygiene</div>
     
     <form id="feedbackForm" onsubmit="submitForm(event)">
         <label>1. Overall Experience</label>
@@ -78,6 +83,9 @@
 </div>
 
 <div class="card thank-you" id="thankYouCard">
+    <div class="logo-container">
+        <img src="Untitled_Artwork.PNG" alt="Yamja Fresh Logo" style="width: 70px; height: 70px;">
+    </div>
     <h2>Thank You!</h2>
     <p>Your voice helps us keep Yamja Fresh clean, honest, and reliable for everyone.</p>
 </div>
