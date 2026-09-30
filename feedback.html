@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
+            background-color: #f4f6f8;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -16,56 +16,57 @@
         }
         .container {
             background: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             text-align: center;
         }
         .logo {
-            max-width: 100px;
+            max-width: 120px;
             height: auto;
             margin-bottom: 10px;
+            border-radius: 8px;
         }
         h2 {
             color: #b30000;
-            margin-bottom: 20px;
             margin-top: 0;
+            margin-bottom: 25px;
         }
         label {
             font-weight: bold;
             display: block;
-            margin-top: 12px;
-            margin-bottom: 5px;
+            margin-top: 15px;
+            margin-bottom: 6px;
             font-size: 14px;
             color: #333;
             text-align: left;
         }
         select, textarea, input {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 14px;
             box-sizing: border-box;
             background-color: #fff;
         }
         textarea {
             resize: vertical;
-            height: 80px;
+            height: 90px;
         }
         button {
             width: 100%;
             background-color: #cc0000;
             color: white;
-            padding: 12px;
+            padding: 14px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 25px;
         }
         button:hover {
             background-color: #990000;
@@ -81,51 +82,57 @@
 <body>
 
 <div class="container">
-    <img src="logo.png" alt="Yamja Fresh Logo" class="logo">
+    <!-- Links directly to your exact image file name on GitHub -->
+    <img src="Untitled_Artwork.PNG" alt="Yamja Fresh Logo" class="logo">
     <h2>Yamja Fresh Feedback</h2>
 
-    <!-- Hidden iframe catches the response silently to avoid CORS errors -->
+    <!-- Hidden iframe handles submission silently to bypass CORS blocks -->
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) { successMessage(); }"></iframe>
 
     <form id="feedbackForm" action="https://script.google.com/macros/s/AKfycbwMvjIsEFBXmTttwC8DhrBEcZC81MwYU6CQ6ox6A98Yf03Wn7JA0lSrxrYYvZhvdeOE/exec" method="POST" target="hidden_iframe">
         
         <label for="experience">Overall Experience:</label>
-        <select id="experience" name="experience">
+        <select id="experience" name="experience" required>
+            <option value="" disabled selected>-- Select Experience --</option>
             <option value="Excellent">⭐ Excellent</option>
             <option value="Good">👍 Good</option>
             <option value="Needs Improvement">⚠️ Needs Improvement</option>
         </select>
 
         <label for="cleanliness">Cleanliness:</label>
-        <select id="cleanliness" name="cleanliness">
+        <select id="cleanliness" name="cleanliness" required>
+            <option value="" disabled selected>-- Select Cleanliness --</option>
             <option value="Very Clean">✨ Very Clean</option>
             <option value="Clean">🧹 Clean</option>
             <option value="Needs Attention">⚠️ Needs Attention</option>
         </select>
 
         <label for="quality">Quality:</label>
-        <select id="quality" name="quality">
+        <select id="quality" name="quality" required>
+            <option value="" disabled selected>-- Select Quality --</option>
             <option value="Premium">🥩 Premium</option>
             <option value="Good Quality">👍 Good Quality</option>
             <option value="Disappointing">❌ Disappointing</option>
         </select>
 
         <label for="pricing">Pricing:</label>
-        <select id="pricing" name="pricing">
+        <select id="pricing" name="pricing" required>
+            <option value="" disabled selected>-- Select Pricing --</option>
             <option value="Fair & Affordable">💵 Fair & Affordable</option>
             <option value="Reasonable">🏷️ Reasonable</option>
             <option value="A Bit High">📈 A Bit High</option>
         </select>
 
         <label for="staff">Staff:</label>
-        <select id="staff" name="staff">
+        <select id="staff" name="staff" required>
+            <option value="" disabled selected>-- Select Staff Rating --</option>
             <option value="Very Polite & Helpful">😊 Very Polite & Helpful</option>
             <option value="Polite">🤝 Polite</option>
             <option value="Unhelpful">⚠️ Unhelpful</option>
         </select>
 
         <label for="comments">Comments / Feedback:</label>
-        <textarea id="comments" name="comments" placeholder="Tell us how we did..."></textarea>
+        <textarea id="comments" name="comments" placeholder="Tell us how we can improve..."></textarea>
 
         <label for="phone">Phone Number:</label>
         <input type="tel" id="phone" name="phone" placeholder="Enter phone number">
