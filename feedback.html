@@ -85,6 +85,7 @@
 
     <form id="feedbackForm" action="https://script.google.com/macros/s/AKfycbwMvjIsEFBXmTttwC8DhrBEcZC81MwYU6CQ6ox6A98Yf03Wn7JA0lSrxrYYvZhvdeOE/exec" method="POST" target="hidden_iframe">
         
+        <!-- EXISTING FIELDS (Cols B - I) -->
         <label for="experience">Overall Experience:</label>
         <select id="experience" name="experience" required>
             <option value="" disabled selected>-- Select Experience --</option>
@@ -133,6 +134,48 @@
 
         <label for="email">Email Address:</label>
         <input type="email" id="email" name="email" placeholder="Enter email address">
+
+        <!-- NEW SURVEY FIELDS (Cols J - N) -->
+        <label for="howHeard">How did you hear about Yamja Fresh?</label>
+        <select id="howHeard" name="howHeard" required>
+            <option value="" disabled selected>-- Select Option --</option>
+            <option value="Friends & Family">👥 Friends & Family</option>
+            <option value="Social Media">📱 Social Media (Facebook / Instagram)</option>
+            <option value="Passed by Store">🏪 Passed by Store / Walk-in</option>
+            <option value="Google Search">🔍 Google Search</option>
+            <option value="QR Code / Flyer">📄 QR Code / Flyer</option>
+        </select>
+
+        <label for="purchaseFrequency">In a week or in a month, how many times do you buy meat from us?</label>
+        <select id="purchaseFrequency" name="purchaseFrequency" required>
+            <option value="" disabled selected>-- Select Purchase Frequency --</option>
+            <option value="First Time">🆕 First Time Today</option>
+            <option value="1-2 times a week">🥩 1-2 times a week</option>
+            <option value="3-4 times a week">🥩 3-4 times a week</option>
+            <option value="1-2 times a month">🥩 1-2 times a month</option>
+            <option value="3-4 times a month">🥩 3-4 times a month</option>
+            <option value="5+ times a month">🥩 5+ times a month</option>
+        </select>
+
+        <label for="onlineService">How is our online order service?</label>
+        <select id="onlineService" name="onlineService" required>
+            <option value="" disabled selected>-- Select Rating --</option>
+            <option value="Excellent">⭐ Excellent & Fast</option>
+            <option value="Good">👍 Good & Convenient</option>
+            <option value="Needs Improvement">⚠️ Needs Improvement</option>
+            <option value="Haven't Used Yet">🛒 Haven't used online order yet</option>
+        </select>
+
+        <label for="recommendation">Will you recommend Yamja Fresh to family & friends?</label>
+        <select id="recommendation" name="recommendation" required>
+            <option value="" disabled selected>-- Select Option --</option>
+            <option value="Definitely Yes">💯 Definitely Yes</option>
+            <option value="Maybe">👍 Maybe</option>
+            <option value="No">❌ No</option>
+        </select>
+
+        <label for="customerName">Full Name:</label>
+        <input type="text" id="customerName" name="customerName" placeholder="Enter full name">
 
         <button type="submit" id="submitBtn">Submit Feedback</button>
         <div id="statusMessage"></div>
